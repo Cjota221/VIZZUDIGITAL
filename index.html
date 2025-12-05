@@ -599,10 +599,34 @@
     .sticky-cta .btn {
       padding: 10px 25px;
       font-size: 0.85rem;
-    }
-
-    @media (max-width: 768px) {
+    }      @media (max-width: 768px) {
       body { font-size: 14px; }
+      
+      .before-after-section [style*="display: grid; grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .before-after-section [style*="grid-template-columns: 1fr 2fr"] {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .before-after-section img {
+        max-width: 100%;
+        width: 100% !important;
+        margin: 0 auto 24px;
+      }
+      
+      .before-after-section h3 {
+        font-size: 1rem;
+      }
+      
+      .before-after-section p {
+        font-size: 0.9rem;
+      }
+      
+      .before-after-section ul {
+        font-size: 0.9rem;
+      }
       
       header { padding: 10px 0; }
       .header-content { padding: 0 16px; }
@@ -751,54 +775,93 @@
         <p style="color:var(--text-dim); font-size:0.95rem;">Mesma plataforma FácilZap. Código customizado. Resultados exponenciais.</p>
       </div>
 
-      <!-- ANTES: FULL-WIDTH LIVRE -->
-      <div style="margin-bottom:50px;">
-        <div style="text-align:center; margin-bottom:20px;">
-          <h3 style="color:var(--accent-red); font-size:1.1rem; margin-bottom:8px;">❌ ANTES • Manancial Kids Padrão</h3>
-          <p style="color:var(--text-dim); font-size:0.85rem;">Layout genérico sem identidade visual</p>
+      <!-- SEÇÃO ANTES E DEPOIS - COMPARAÇÃO VISUAL PRINCIPAL -->
+      <div style="max-width: 1100px; margin: 60px auto 100px; padding: 0 20px;">
+        <div style="text-align: center; margin-bottom: 50px;">
+          <h3 style="font-size: 1.6rem; color: var(--text); margin-bottom: 12px; font-weight: 900;">📊 Comparação Real: ANTES vs DEPOIS</h3>
+          <p style="color: var(--text-dim); font-size: 0.95rem;">Mesma plataforma, código estratégico. Veja o resultado.</p>
         </div>
-        <div style="display:flex; justify-content:center; margin-bottom:24px;">
-          <img src="https://i.ibb.co/HLt54g9x/Design-sem-nome-54.png" alt="Manancial Kids padrão FácilZap" style="max-width:90%; width:100%; height:auto; border-radius:12px; box-shadow: 0 15px 40px rgba(255, 71, 87, 0.25);">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 50px; align-items: center;">
+          <!-- BLOCO ANTES -->
+          <div style="text-align: center;">
+            <h4 style="color: var(--accent-red); font-size: 1.3rem; margin-bottom: 20px; font-weight: 900;">❌ ANTES</h4>
+            <div style="display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); backdrop-filter: blur(15px); border-radius: 40px; padding: 25px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25), inset 0 1px 1px rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1);">
+              <img src="https://i.ibb.co/8ndfMgX5/12-1.png" alt="Loja padrão ANTES" style="width: 100%; height: auto; max-width: 380px; border-radius: 30px; box-shadow: 0 20px 60px rgba(255, 71, 87, 0.35); object-fit: cover; mix-blend-mode: normal; filter: brightness(1) contrast(1.05);">
+            </div>
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 20px; line-height: 1.6;">Layout genérico. Conversão baixa. Sem identidade visual.</p>
+          </div>
+
+          <!-- BLOCO DEPOIS -->
+          <div style="text-align: center;">
+            <h4 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 20px; font-weight: 900;">✅ DEPOIS</h4>
+            <div style="display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); backdrop-filter: blur(15px); border-radius: 40px; padding: 25px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25), inset 0 1px 1px rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1);">
+              <img src="https://i.ibb.co/mV4VCDH5/12-2.png" alt="Loja transformada DEPOIS" style="width: 100%; height: auto; max-width: 380px; border-radius: 30px; box-shadow: 0 20px 60px rgba(204, 255, 0, 0.4); object-fit: cover; mix-blend-mode: normal; filter: brightness(1) contrast(1.05);">
+            </div>
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 20px; line-height: 1.6;">Design estratégico. +240% conversão. ROI comprovado.</p>
+          </div>
         </div>
-        <div style="max-width:800px; margin:0 auto; background:rgba(255, 71, 87, 0.1); border-left:3px solid var(--accent-red); padding:20px 20px; border-radius:8px;">
-          <ul style="list-style:none; padding:0; margin:0; font-size:0.9rem; color:var(--text-dim); display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
-            <li>• Menu genérico desorganizado</li>
-            <li>• Sem identidade visual</li>
-            <li>• Cards simples</li>
-            <li>• Sem oferta destacada</li>
-            <li>• Baixa hierarquia visual</li>
-            <li>• Conversão limitada</li>
+      </div>
+
+      <!-- BLOCO MANANCIAL ANTES: Grid 70% Imagem / 30% Texto -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: center; margin-bottom: 80px;">
+        <!-- IMAGEM ANTES (12-1) SUBSTITUINDO A MANANCIAL ORIGINAL -->
+        <div style="display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); backdrop-filter: blur(15px); border-radius: 40px; padding: 25px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25), inset 0 1px 1px rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1);">
+          <img src="https://i.ibb.co/8ndfMgX5/12-1.png" alt="Loja ANTES transformação" style="width: 100%; height: auto; max-width: 450px; border-radius: 30px; box-shadow: 0 20px 60px rgba(255, 71, 87, 0.3); object-fit: cover; mix-blend-mode: normal; filter: brightness(1) contrast(1.05);">
+        </div>
+        <!-- TEXTO ANTES -->
+        <div>
+          <h3 style="color: var(--accent-red); font-size: 1.25rem; margin-bottom: 16px; font-weight: 900;">❌ ANTES</h3>
+          <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6;">Layout padrão FácilZap — Genérico sem identidade visual. Conversão baixa, usuário se perde.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.95rem; color: var(--text-dim);">
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--accent-red); font-weight: 900;">✗</span> Menu desorganizado</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--accent-red); font-weight: 900;">✗</span> Sem identidade visual</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--accent-red); font-weight: 900;">✗</span> Cards simples e genéricos</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--accent-red); font-weight: 900;">✗</span> Nenhuma oferta em destaque</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--accent-red); font-weight: 900;">✗</span> Hierarquia visual fraca</li>
+            <li style="display: flex; gap: 10px;"><span style="color: var(--accent-red); font-weight: 900;">✗</span> Conversão limitada</li>
           </ul>
         </div>
       </div>
 
-      <!-- DEPOIS: FULL-WIDTH LIVRE -->
-      <div style="margin-bottom:60px;">
-        <div style="text-align:center; margin-bottom:20px;">
-          <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:8px;">✅ DEPOIS • Manancial Kids com VIZZU</h3>
-          <p style="color:var(--text-dim); font-size:0.85rem;">Código profissional + Design estratégico</p>
-        </div>
-        <div style="display:flex; justify-content:center; margin-bottom:24px;">
-          <img src="https://i.ibb.co/FbsC9Vsv/3.png" alt="Manancial Kids customizada VIZZU" style="max-width:90%; width:100%; height:auto; border-radius:12px; box-shadow: 0 15px 40px rgba(204, 255, 0, 0.35);">
-        </div>
-        <div style="max-width:800px; margin:0 auto; background:rgba(204, 255, 0, 0.1); border-left:3px solid var(--primary); padding:20px 20px; border-radius:8px;">
-          <ul style="list-style:none; padding:0; margin:0; font-size:0.9rem; color:var(--text-dim); display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
-            <li>• Hero forte com oferta destaque</li>
-            <li>• Identidade visual clara</li>
-            <li>• Coleções organizadas</li>
-            <li>• CTAs otimizadas</li>
-            <li>• 10 widgets de conversão</li>
-            <li>• +240% conversão</li>
+      <!-- BLOCO MANANCIAL DEPOIS: Grid 70% Imagem / 30% Texto (invertido) -->
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: center; margin-bottom: 80px;">
+        <!-- TEXTO DEPOIS -->
+        <div>
+          <h3 style="color: var(--primary); font-size: 1.25rem; margin-bottom: 16px; font-weight: 900;">✅ DEPOIS</h3>
+          <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6;">Com VIZZU — Código profissional + design estratégico que converte.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.95rem; color: var(--text-dim);">
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--primary); font-weight: 900;">✓</span> Hero forte com oferta destaque</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--primary); font-weight: 900;">✓</span> Identidade visual clara</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--primary); font-weight: 900;">✓</span> Coleções organizadas e atrativas</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--primary); font-weight: 900;">✓</span> CTAs otimizadas e visíveis</li>
+            <li style="margin-bottom: 12px; display: flex; gap: 10px;"><span style="color: var(--primary); font-weight: 900;">✓</span> 10 widgets de conversão</li>
+            <li style="display: flex; gap: 10px;"><span style="color: var(--primary); font-weight: 900; font-size: 1.1rem;">→</span> <strong>+240% conversão</strong></li>
           </ul>
+        </div>
+        <!-- IMAGEM DEPOIS (12-2) SUBSTITUINDO A MANANCIAL ORIGINAL -->
+        <div style="display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); backdrop-filter: blur(15px); border-radius: 40px; padding: 25px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25), inset 0 1px 1px rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1);">
+          <img src="https://i.ibb.co/mV4VCDH5/12-2.png" alt="Loja transformada DEPOIS" style="width: 100%; height: auto; max-width: 450px; border-radius: 30px; box-shadow: 0 20px 60px rgba(204, 255, 0, 0.4); object-fit: cover; mix-blend-mode: normal; filter: brightness(1) contrast(1.05);">
         </div>
       </div>
 
-      <!-- EXEMPLO EXTRA: CJOTA RASTEIRINHAS FULL-WIDTH -->
-      <div style="background:linear-gradient(135deg, rgba(213, 0, 249, 0.1), rgba(204, 255, 0, 0.05)); border:2px solid var(--secondary); border-radius:15px; padding:40px 24px; margin-bottom:50px; text-align:center;">
-        <h3 style="color:var(--secondary); margin-bottom:12px; font-size:1.1rem;">🎯 Outro Exemplo: CJOTA Rasteirinhas</h3>
-        <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:30px;">Cada loja recebe transformação 100% única</p>
-        <div style="display:flex; justify-content:center;">
-          <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/e788eb9d-73b1-438b-b453-f105deae4a8e" alt="CJOTA Rasteirinhas customizada" style="max-width:85%; width:100%; height:auto; border-radius:12px; box-shadow: 0 15px 40px rgba(213, 0, 249, 0.3);">
+      <!-- BLOCO CJOTA: Imagem SEM FUNDO BRANCO + Texto ao lado -->
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px; align-items: center; margin-bottom: 100px;">
+        <!-- IMAGEM CJOTA - ESQUERDA COM GLASSMORPHISM EFFECT -->
+        <div style="display: flex; justify-content: center; align-items: center; max-width: 500px; margin: 0 auto; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); backdrop-filter: blur(15px); border-radius: 40px; padding: 25px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25), inset 0 1px 1px rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1);">
+          <img src="https://i.ibb.co/WvXgBcMg/12.png" alt="CJOTA Rasteirinhas customizada" style="width: 100%; height: auto; max-width: 400px; border-radius: 30px; box-shadow: 0 20px 60px rgba(213, 0, 249, 0.4); object-fit: contain; display: block; mix-blend-mode: normal; filter: brightness(1) contrast(1.05);">
+        </div>
+        <!-- TEXTO CJOTA - DIREITA -->
+        <div style="padding: 0;">
+          <h3 style="color: var(--secondary); font-size: 1.4rem; margin-bottom: 20px; font-weight: 900;">🎯 CJOTA<br>Rasteirinhas</h3>
+          <p style="color: var(--text-dim); font-size: 1rem; margin-bottom: 28px; line-height: 1.7;">Transformação 100% customizada. Cada loja recebe design único, estratégico e pronto para vender mais.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.95rem; color: var(--text-dim);">
+            <li style="margin-bottom: 14px; display: flex; gap: 12px;"><i class="fas fa-star" style="color: var(--secondary); margin-top: 3px; flex-shrink: 0; font-size: 1.1rem;"></i> <span>Branding estratégico</span></li>
+            <li style="margin-bottom: 14px; display: flex; gap: 12px;"><i class="fas fa-star" style="color: var(--secondary); margin-top: 3px; flex-shrink: 0; font-size: 1.1rem;"></i> <span>Coleções em destaque</span></li>
+            <li style="margin-bottom: 14px; display: flex; gap: 12px;"><i class="fas fa-star" style="color: var(--secondary); margin-top: 3px; flex-shrink: 0; font-size: 1.1rem;"></i> <span>Widgets inteligentes</span></li>
+            <li style="margin-bottom: 14px; display: flex; gap: 12px;"><i class="fas fa-star" style="color: var(--secondary); margin-top: 3px; flex-shrink: 0; font-size: 1.1rem;"></i> <span>Carrinho otimizado</span></li>
+            <li style="display: flex; gap: 12px;"><i class="fas fa-star" style="color: var(--secondary); margin-top: 3px; flex-shrink: 0; font-size: 1.1rem;"></i> <span><strong style="color: var(--secondary);">+180% conversão</strong></span></li>
+          </ul>
         </div>
       </div>
 
