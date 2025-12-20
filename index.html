@@ -135,6 +135,10 @@ img{max-width:100%;height:auto;display:block}
 .portfolio-info{position:absolute;bottom:0;left:0;right:0;padding:20px;z-index:2}
 .portfolio-info h4{font-size:1.1rem;margin-bottom:4px}
 .portfolio-info p{color:var(--lime);font-size:.8rem}
+.portfolio-item{cursor:pointer;transition:transform .3s}
+.portfolio-item:hover{transform:scale(1.03)}
+.portfolio-link{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;background:var(--lime);color:var(--dark);font-size:.75rem;font-weight:600;border-radius:20px;transition:all .3s}
+.portfolio-link:hover{background:var(--white);transform:scale(1.05)}
 
 /* PRICING MOBILE OPTIMIZED */
 .pricing-section{background:var(--dark)}
@@ -370,9 +374,9 @@ img{max-width:100%;height:auto;display:block}
 <h2>Projetos <span>Realizados</span></h2>
 </div>
 <div class="portfolio-grid">
-<div class="portfolio-item reveal"><img src="https://i.ibb.co/zWr5JyN3/ALS-MULTIMARCAS.jpg" alt="ALS Multimarcas"><div class="portfolio-info"><h4>ALS Multimarcas</h4><p>E-commerce de Roupas</p></div></div>
-<div class="portfolio-item reveal"><img src="https://i.ibb.co/HTndT4fS/MANANCIAL-KIDS.jpg" alt="Manancial Kids"><div class="portfolio-info"><h4>Manancial Kids</h4><p>Moda Infantil</p></div></div>
-<div class="portfolio-item reveal"><img src="https://i.ibb.co/DPxzdzsV/CJOTA-RASTEIRINHAS.jpg" alt="CJota"><div class="portfolio-info"><h4>CJota Rasteirinhas</h4><p>Calcados Femininos</p></div></div>
+<a href="https://alsmultimarcas.com.br/" target="_blank" class="portfolio-item reveal"><img src="https://i.ibb.co/zWr5JyN3/ALS-MULTIMARCAS.jpg" alt="ALS Multimarcas"><div class="portfolio-info"><h4>ALS Multimarcas</h4><p>E-commerce de Roupas</p><span class="portfolio-link"><i class="fas fa-external-link-alt"></i> Visitar Loja</span></div></a>
+<a href="https://manancialkidsatacado.com.br/" target="_blank" class="portfolio-item reveal"><img src="https://i.ibb.co/HTndT4fS/MANANCIAL-KIDS.jpg" alt="Manancial Kids"><div class="portfolio-info"><h4>Manancial Kids</h4><p>Moda Infantil Atacado</p><span class="portfolio-link"><i class="fas fa-external-link-alt"></i> Visitar Loja</span></div></a>
+<a href="https://cjotarasteirinhas.com.br/" target="_blank" class="portfolio-item reveal"><img src="https://i.ibb.co/DPxzdzsV/CJOTA-RASTEIRINHAS.jpg" alt="CJota"><div class="portfolio-info"><h4>CJota Rasteirinhas</h4><p>Calcados Femininos</p><span class="portfolio-link"><i class="fas fa-external-link-alt"></i> Visitar Loja</span></div></a>
 </div>
 </div>
 </section>
@@ -650,6 +654,7 @@ document.addEventListener('mouseout',e=>{if(!shown&&e.clientY<10&&!localStorage.
 </script>
 </body>
 </html>
+
 
 
 
