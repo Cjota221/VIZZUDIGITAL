@@ -1257,6 +1257,8 @@
             if (!nome) { alert('Selecione uma aplicacao!'); return; }
             if (!codigo) { alert('Cole o codigo HTML da aplicacao!'); return; }
             
+            console.log('Salvando preview:', nome, '| dbOnline:', dbOnline);
+            
             // Verificar se ja existe
             const existente = previews.findIndex(p => p.nome === nome);
             
@@ -1268,8 +1270,13 @@
                 // Atualizar no Supabase
                 if (dbOnline) {
                     try {
-                        await db.from('previews').update({ codigo, updated_at: new Date().toISOString() }).eq('nome', nome);
-                        console.log('Preview atualizado no Supabase!');
+                        const { error } = await db.from('previews').update({ codigo, updated_at: new Date().toISOString() }).eq('nome', nome);
+                        if (error) {
+                            console.error('Erro Supabase update:', error);
+                            alert('Erro ao salvar no Supabase: ' + error.message);
+                        } else {
+                            console.log('Preview atualizado no Supabase!');
+                        }
                     } catch(e) {
                         console.error('Erro ao atualizar preview:', e);
                     }
@@ -1286,13 +1293,18 @@
                 if (dbOnline) {
                     try {
                         const { data, error } = await db.from('previews').insert([novoPreview]).select();
-                        if (!error && data && data[0]) {
+                        if (error) {
+                            console.error('Erro Supabase insert:', error);
+                            alert('Erro ao salvar no Supabase: ' + error.message + '\n\nVerifique se a tabela "previews" foi criada!');
+                        } else if (data && data[0]) {
                             novoPreview.id = data[0].id;
+                            console.log('Preview salvo no Supabase! ID:', data[0].id);
                         }
-                        console.log('Preview salvo no Supabase!');
                     } catch(e) {
                         console.error('Erro ao salvar preview:', e);
                     }
+                } else {
+                    console.warn('Supabase offline! Salvando apenas localmente.');
                 }
                 
                 previews.push(novoPreview);
@@ -1305,7 +1317,7 @@
             document.getElementById('selectAplicacao').value = '';
             document.getElementById('codigoPreview').value = '';
             
-            alert('Preview de "' + nome + '" salvo com sucesso!');
+            alert('Preview de "' + nome + '" salvo com sucesso!' + (dbOnline ? ' (Sincronizado na nuvem)' : ' (Apenas local)'));
         }
         
         window.editarPreview = function(idx) {
