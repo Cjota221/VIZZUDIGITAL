@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JNXHFRCBK"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-5JNXHFRCBK');
+function trackEvent(action, category, label) {
+  gtag('event', action, { 'event_category': category, 'event_label': label });
+}
+</script>
 <meta name="theme-color" content="#0a0a0f">
 <title>Monte seu Combo | VIZZU Digital</title>
 <link rel="icon" type="image/png" href="https://i.ibb.co/7dZ9GK5M/VIZZU.png">
@@ -223,22 +234,22 @@ img{max-width:100%;height:auto;display:block}
 
 <!-- Planos Sugestão -->
 <section class="planos-sugestao reveal">
-<div class="planos-title"><i class="fas fa-lightbulb"></i> Sugestões de Combo</div>
+<div class="planos-title"><i class="fas fa-lightbulb"></i> Sugestoes de Combo</div>
 <div class="planos-grid">
-<div class="plano-sugestao" onclick="aplicarPlano('start')">
-<h4 class="start">🟢 Start</h4>
+<div class="plano-sugestao" onclick="aplicarPlano('start'); trackEvent('click', 'Plano Sugestao', 'Start')">
+<h4 class="start">Start</h4>
 <div class="valor">R$1.270</div>
-<div class="desc">Redesign produto+carrinho • 1 carrossel • 3 aplicações • 1 banner</div>
+<div class="desc">Redesign produto+carrinho - 1 carrossel - 3 aplicacoes - 1 banner</div>
 </div>
-<div class="plano-sugestao" onclick="aplicarPlano('pro')">
-<h4 class="pro">🔵 Pro</h4>
+<div class="plano-sugestao" onclick="aplicarPlano('pro'); trackEvent('click', 'Plano Sugestao', 'Pro')">
+<h4 class="pro">Pro</h4>
 <div class="valor">R$2.040</div>
-<div class="desc">Redesign completo • 2 carrosseis • 5 aplicações • 3 banners</div>
+<div class="desc">Redesign completo - 2 carrosseis - 5 aplicacoes - 3 banners</div>
 </div>
-<div class="plano-sugestao" onclick="aplicarPlano('premium')">
-<h4 class="premium">🟣 Premium</h4>
+<div class="plano-sugestao" onclick="aplicarPlano('premium'); trackEvent('click', 'Plano Sugestao', 'Premium')">
+<h4 class="premium">Premium</h4>
 <div class="valor">R$3.680</div>
-<div class="desc">Redesign completo • 3 carrosseis • 8 aplicações • 5 banners • Estrutura institucional</div>
+<div class="desc">Redesign completo - 3 carrosseis - 8 aplicacoes - 5 banners - Estrutura institucional</div>
 </div>
 </div>
 </section>
@@ -409,7 +420,7 @@ img{max-width:100%;height:auto;display:block}
 <div class="parcelas" id="parcelasTexto"></div>
 </div>
 
-<button class="btn-whatsapp" onclick="enviarWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar Proposta</button>
+<button class="btn-whatsapp" onclick="enviarWhatsApp(); trackEvent('click', 'WhatsApp', 'Enviar Proposta Orcamento')"><i class="fab fa-whatsapp"></i> Enviar Proposta</button>
 </div>
 </div>
 

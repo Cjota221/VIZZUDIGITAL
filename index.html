@@ -3,6 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JNXHFRCBK"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-5JNXHFRCBK');
+
+// Funcao para rastrear eventos
+function trackEvent(action, category, label) {
+  gtag('event', action, {
+    'event_category': category,
+    'event_label': label
+  });
+}
+</script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -258,7 +274,7 @@ img{max-width:100%;height:auto;display:block}
 <header class="header">
 <div class="container header-content">
 <a href="#" class="logo"><img src="https://i.ibb.co/7dZ9GK5M/VIZZU.png" alt="VIZZU Digital"></a>
-<a href="#planos" class="btn btn-primary">Ver Planos</a>
+<a href="#planos" onclick="trackEvent('click', 'Navegacao', 'Header Ver Planos')" class="btn btn-primary">Ver Planos</a>
 </div>
 </header>
 
@@ -270,8 +286,8 @@ img{max-width:100%;height:auto;display:block}
 <h1 class="reveal">Transforme seu catalogo em uma <span class="highlight">maquina de vendas</span></h1>
 <p class="hero-sub reveal">Design profissional que gera confianca e converte visitantes em clientes. Sua loja com aparencia premium.</p>
 <div class="hero-cta reveal">
-<a href="#planos" class="btn btn-lime"><i class="fas fa-rocket"></i> Ver Planos</a>
-<a href="orcamento.html" class="btn btn-primary"><i class="fas fa-puzzle-piece"></i> Monte seu Combo</a>
+<a href="#planos" onclick="trackEvent('click', 'Navegacao', 'Hero Ver Planos')" class="btn btn-lime"><i class="fas fa-rocket"></i> Ver Planos</a>
+<a href="orcamento.html" onclick="trackEvent('click', 'Navegacao', 'Hero Monte Combo')" class="btn btn-primary"><i class="fas fa-puzzle-piece"></i> Monte seu Combo</a>
 </div>
 <div class="hero-stats reveal">
 <div class="stat-item"><div class="stat-number" data-target="50">0</div><div class="stat-label">Lojas</div></div>
@@ -391,7 +407,7 @@ img{max-width:100%;height:auto;display:block}
 <span class="highlight-badge">Mais Popular</span>
 <h3>Combo Pro</h3>
 <div class="price">R$ 2.040</div><p style="font-size:.85rem;color:var(--gray)">ou 2x de R$ 1.020 sem juros</p><p style="font-size:.8rem;color:var(--lime);margin-top:8px"><i class="fas fa-bolt"></i> Projeto inicia apos pagamento</p>
-<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20COMBO%20PRO%20de%20R%242.040" class="btn btn-lime btn-full"><i class="fab fa-whatsapp"></i> Quero Este Plano</a>
+<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20COMBO%20PRO%20de%20R%242.040" onclick="trackEvent('click', 'WhatsApp', 'Combo Pro Destaque')" class="btn btn-lime btn-full"><i class="fab fa-whatsapp"></i> Quero Este Plano</a>
 </div>
 <div class="pricing-grid">
 <div class="price-card reveal">
@@ -400,7 +416,7 @@ img{max-width:100%;height:auto;display:block}
 <div class="price-value">R$ 1.270</div>
 <div class="price-period">à vista</div><div class="price-delivery"><i class="fas fa-clock"></i> 7 dias uteis</div></div><ul class="price-features"><li><i class="fas fa-check"></i> Redesign Produto + Carrinho</li><li><i class="fas fa-check"></i> 1 Carrossel de vídeo</li><li><i class="fas fa-check"></i> 3 Aplicações</li><li><i class="fas fa-check"></i> 1 Banner exclusivo</li><li><i class="fas fa-check"></i> Design responsivo</li><li><i class="fas fa-check"></i> Cores da sua marca</li>
 </ul>
-<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20plano%20START%20de%20R%241.270" class="btn btn-outline btn-full"><i class="fab fa-whatsapp"></i> Escolher</a>
+<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20plano%20START%20de%20R%241.270" onclick="trackEvent('click', 'WhatsApp', 'Plano Start')" class="btn btn-outline btn-full"><i class="fab fa-whatsapp"></i> Escolher</a>
 </div>
 <div class="price-card featured reveal">
 <span class="price-badge">Recomendado</span>
@@ -413,7 +429,7 @@ img{max-width:100%;height:auto;display:block}
 <ul class="price-features">
 <li><i class="fas fa-check"></i> Redesign Completo</li><li><i class="fas fa-check"></i> 2 Carrosseis de vídeo</li><li><i class="fas fa-check"></i> 5 Aplicações</li><li><i class="fas fa-check"></i> 3 Banners exclusivos</li><li><i class="fas fa-check"></i> Animações premium</li><li><i class="fas fa-check"></i> 30 dias de suporte</li>
 </ul>
-<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20plano%20PRO%20de%20R%242.040" class="btn btn-lime btn-full"><i class="fab fa-whatsapp"></i> Escolher</a>
+<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20plano%20PRO%20de%20R%242.040" onclick="trackEvent('click', 'WhatsApp', 'Plano Pro')" class="btn btn-lime btn-full"><i class="fab fa-whatsapp"></i> Escolher</a>
 </div>
 <div class="price-card reveal">
 <div class="price-header">
@@ -425,7 +441,7 @@ img{max-width:100%;height:auto;display:block}
 <ul class="price-features">
 <li><i class="fas fa-check"></i> Redesign Completo</li><li><i class="fas fa-check"></i> 3 Carrosseis de vídeo</li><li><i class="fas fa-check"></i> 8 Aplicações</li><li><i class="fas fa-check"></i> 5 Banners exclusivos</li><li><i class="fas fa-check"></i> Estrutura Institucional</li><li><i class="fas fa-check"></i> 60 dias de suporte</li>
 </ul>
-<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20plano%20PREMIUM%20de%20R%243.680" class="btn btn-outline btn-full"><i class="fab fa-whatsapp"></i> Escolher</a>
+<a href="https://wa.me/5562982237075?text=Oi!%20Quero%20o%20plano%20PREMIUM%20de%20R%243.680" onclick="trackEvent('click', 'WhatsApp', 'Plano Premium')" class="btn btn-outline btn-full"><i class="fab fa-whatsapp"></i> Escolher</a>
 </div>
 </div>
 </div>
@@ -445,7 +461,7 @@ img{max-width:100%;height:auto;display:block}
 <ul class="monthly-features">
 <li><i class="fas fa-check"></i> 2 atualizações do carrossel/mês</li><li><i class="fas fa-check"></i> 2 atualizações dos widgets/mês</li><li><i class="fas fa-check"></i> Suporte WhatsApp</li>
 </ul>
-<a href="https://wa.me/5562982237075?text=Quero%20o%20plano%20BASIC%20mensal" class="btn btn-outline btn-full">Contratar</a>
+<a href="https://wa.me/5562982237075?text=Quero%20o%20plano%20BASIC%20mensal" onclick="trackEvent('click', 'WhatsApp', 'Mensal Basic')" class="btn btn-outline btn-full">Contratar</a>
 </div>
 <div class="monthly-card reveal">
 <h4>Intermediario</h4>
@@ -453,7 +469,7 @@ img{max-width:100%;height:auto;display:block}
 <ul class="monthly-features">
 <li><i class="fas fa-check"></i> 4 atualizações do carrossel/mês</li><li><i class="fas fa-check"></i> 3 atualizações dos widgets/mês</li><li><i class="fas fa-check"></i> Cupom e barra de vantagens</li><li><i class="fas fa-check"></i> Suporte WhatsApp</li>
 </ul>
-<a href="https://wa.me/5562982237075?text=Quero%20o%20plano%20INTERMEDIARIO%20mensal" class="btn btn-outline btn-full">Contratar</a>
+<a href="https://wa.me/5562982237075?text=Quero%20o%20plano%20INTERMEDIARIO%20mensal" onclick="trackEvent('click', 'WhatsApp', 'Mensal Intermediario')" class="btn btn-outline btn-full">Contratar</a>
 </div>
 <div class="monthly-card reveal">
 <h4>Premium</h4>
@@ -461,7 +477,7 @@ img{max-width:100%;height:auto;display:block}
 <ul class="monthly-features">
 <li><i class="fas fa-check"></i> 6 atualizações do carrossel/mês</li><li><i class="fas fa-check"></i> 3 atualizações dos widgets/mês</li><li><i class="fas fa-check"></i> Todos os widgets inclusos</li><li><i class="fas fa-check"></i> Suporte WhatsApp</li>
 </ul>
-<a href="https://wa.me/5562982237075?text=Quero%20o%20plano%20PREMIUM%20mensal" class="btn btn-outline btn-full">Contratar</a>
+<a href="https://wa.me/5562982237075?text=Quero%20o%20plano%20PREMIUM%20mensal" onclick="trackEvent('click', 'WhatsApp', 'Mensal Premium')" class="btn btn-outline btn-full">Contratar</a>
 </div>
 </div>
 </div>
