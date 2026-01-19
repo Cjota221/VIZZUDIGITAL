@@ -24,7 +24,7 @@ function trackEvent(action, category, label) {
 <script>
 const SUPABASE_URL = 'https://kvpetrexgrpizwfomjjt.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cGV0cmV4Z3JwaXp3Zm9tamp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MzkzNjUsImV4cCI6MjA4NDQxNTM2NX0.kP9TQqYIiPchtd7Y89oQdg78nZw4GBiTvLhxhz1vWs8';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -655,7 +655,7 @@ localStorage.setItem('vizzu_leads',JSON.stringify(leads));
 
 // Salvar no Supabase
 try{
-await supabase.from('leads').insert(lead);
+await db.from('leads').insert(lead);
 console.log('Lead salvo no Supabase!');
 }catch(err){console.log('Erro ao salvar lead:',err)}
 

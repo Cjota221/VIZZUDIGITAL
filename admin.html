@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -476,21 +476,21 @@
                 <div class="banner-opt" data-qtd="5">5 - R$450</div>
             </div>
             
-            <div class="section-title"><i class="fas fa-bolt"></i> Aplicações Simples (R$150)</div>
+            <div class="section-title"><i class="fas fa-bolt"></i> Aplica��es Simples (R$150)</div>
             <div class="options-grid" id="appSimples">
-                <div class="option-item" data-valor="150" data-nome="Botão WhatsApp"><div class="check"><i class="fas fa-check"></i></div>Botão WhatsApp</div>
+                <div class="option-item" data-valor="150" data-nome="Bot�o WhatsApp"><div class="check"><i class="fas fa-check"></i></div>Bot�o WhatsApp</div>
                 <div class="option-item" data-valor="150" data-nome="Barra de Vantagens"><div class="check"><i class="fas fa-check"></i></div>Barra de Vantagens</div>
-                <div class="option-item" data-valor="150" data-nome="Cupom Copiável"><div class="check"><i class="fas fa-check"></i></div>Cupom Copiável</div>
-                <div class="option-item" data-valor="150" data-nome="Oferta Relâmpago"><div class="check"><i class="fas fa-check"></i></div>Oferta Relâmpago</div>
-                <div class="option-item" data-valor="150" data-nome="Brinde Automático"><div class="check"><i class="fas fa-check"></i></div>Brinde Automático</div>
+                <div class="option-item" data-valor="150" data-nome="Cupom Copi�vel"><div class="check"><i class="fas fa-check"></i></div>Cupom Copi�vel</div>
+                <div class="option-item" data-valor="150" data-nome="Oferta Rel�mpago"><div class="check"><i class="fas fa-check"></i></div>Oferta Rel�mpago</div>
+                <div class="option-item" data-valor="150" data-nome="Brinde Autom�tico"><div class="check"><i class="fas fa-check"></i></div>Brinde Autom�tico</div>
                 <div class="option-item" data-valor="150" data-nome="Feedbacks"><div class="check"><i class="fas fa-check"></i></div>Feedbacks</div>
-                <div class="option-item" data-valor="150" data-nome="Rodapé Informativo"><div class="check"><i class="fas fa-check"></i></div>Rodapé Informativo</div>
-                <div class="option-item" data-valor="150" data-nome="Links Rápidos"><div class="check"><i class="fas fa-check"></i></div>Links Rápidos</div>
+                <div class="option-item" data-valor="150" data-nome="Rodap� Informativo"><div class="check"><i class="fas fa-check"></i></div>Rodap� Informativo</div>
+                <div class="option-item" data-valor="150" data-nome="Links R�pidos"><div class="check"><i class="fas fa-check"></i></div>Links R�pidos</div>
                 <div class="option-item" data-valor="150" data-nome="Destaques"><div class="check"><i class="fas fa-check"></i></div>Destaques</div>
-                <div class="option-item" data-valor="150" data-nome="Promoções"><div class="check"><i class="fas fa-check"></i></div>Promoções</div>
+                <div class="option-item" data-valor="150" data-nome="Promo��es"><div class="check"><i class="fas fa-check"></i></div>Promo��es</div>
             </div>
             
-            <div class="section-title"><i class="fas fa-shopping-bag"></i> Aplicações Compra (R$120)</div>
+            <div class="section-title"><i class="fas fa-shopping-bag"></i> Aplica��es Compra (R$120)</div>
             <div class="options-grid" id="appCompra">
                 <div class="option-item" data-valor="120" data-nome="Compre por Tamanho"><div class="check"><i class="fas fa-check"></i></div>Compre por Tamanho</div>
                 <div class="option-item" data-valor="120" data-nome="Compre por Marca"><div class="check"><i class="fas fa-check"></i></div>Compre por Marca</div>
@@ -502,7 +502,7 @@
                 <div class="option-item" data-valor="250" data-nome="Carrossel de Produtos"><div class="check"><i class="fas fa-check"></i></div>Carrossel de Produtos</div>
             </div>
             
-            <div class="section-title"><i class="fas fa-calculator"></i> Avançado</div>
+            <div class="section-title"><i class="fas fa-calculator"></i> Avan�ado</div>
             <div class="options-grid">
                 <div class="option-item" data-valor="550" data-nome="Calculadora Personalizada"><div class="check"><i class="fas fa-check"></i></div>Calculadora - R$550</div>
             </div>
@@ -709,7 +709,7 @@
         // ===== SUPABASE CONFIG =====
         const SUPABASE_URL = 'https://kvpetrexgrpizwfomjjt.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cGV0cmV4Z3JwaXp3Zm9tamp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MzkzNjUsImV4cCI6MjA4NDQxNTM2NX0.kP9TQqYIiPchtd7Y89oQdg78nZw4GBiTvLhxhz1vWs8';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // ===== DADOS =====
         let propostas = [];
@@ -725,7 +725,7 @@
         const precoBanner = { 0: 0, 1: 120, 3: 300, 5: 450 };
         let dbOnline = false;
         
-        // ===== INICIALIZAÇÃO =====
+        // ===== INICIALIZA��O =====
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin carregado!');
             carregarDados();
@@ -802,7 +802,7 @@
         
         // ===== EVENTOS =====
         function setupEventos() {
-            // Botão Nova Proposta
+            // Bot�o Nova Proposta
             document.getElementById('btnNovaProposta').addEventListener('click', function() {
                 console.log('Abrindo modal nova proposta');
                 abrirModalNova();
@@ -921,7 +921,7 @@
             // Salvar no Supabase
             if (dbOnline) {
                 try {
-                    const { error } = await supabase.from('cupons').insert(novoCupom);
+                    const { error } = await db.from('cupons').insert(novoCupom);
                     if (error) console.error('Erro ao criar cupom:', error);
                     else console.log('Cupom criado no Supabase!');
                 } catch(e) {
@@ -988,7 +988,7 @@
                 // Excluir do Supabase
                 if (dbOnline && cupom) {
                     try {
-                        await supabase.from('cupons').delete().eq('codigo', cupom.codigo);
+                        await db.from('cupons').delete().eq('codigo', cupom.codigo);
                         console.log('Cupom excluido do Supabase!');
                     } catch(e) {
                         console.error('Erro ao excluir cupom:', e);
@@ -1075,7 +1075,7 @@
                 // Excluir do Supabase
                 if (dbOnline && lead && lead.id) {
                     try {
-                        await supabase.from('leads').delete().eq('id', lead.id);
+                        await db.from('leads').delete().eq('id', lead.id);
                         console.log('Lead excluido do Supabase!');
                     } catch(e) {
                         console.error('Erro ao excluir lead:', e);
@@ -1153,11 +1153,11 @@
                 return;
             }
             
-            let html = '<table><thead><tr><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th><th>A��es</th></tr></thead><tbody>';
             
             lista.forEach(function(p) {
                 html += '<tr>';
-                html += '<td><div class="cliente-nome">' + (p.loja || 'Sem nome') + '</div><div class="cliente-tel">' + (p.cliente || '') + ' ' + (p.telefone ? '• ' + p.telefone : '') + '</div></td>';
+                html += '<td><div class="cliente-nome">' + (p.loja || 'Sem nome') + '</div><div class="cliente-tel">' + (p.cliente || '') + ' ' + (p.telefone ? '� ' + p.telefone : '') + '</div></td>';
                 html += '<td>' + (p.data || '-') + '</td>';
                 html += '<td><div class="valor">R$' + (p.total || 0).toLocaleString('pt-BR') + '</div></td>';
                 html += '<td><select class="status-select" onchange="mudarStatus(' + p.id + ', this.value)">';
@@ -1179,7 +1179,7 @@
             container.innerHTML = html;
         }
         
-        // ===== FUNÇÕES GLOBAIS =====
+        // ===== FUN��ES GLOBAIS =====
         window.mudarStatus = function(id, status) {
             const idx = propostas.findIndex(p => p.id === id);
             if (idx !== -1) {
@@ -1486,7 +1486,7 @@
         async function salvarPropostaDB(proposta) {
             if (!dbOnline) return;
             try {
-                const { error } = await supabase.from('propostas').insert({
+                const { error } = await db.from('propostas').insert({
                     id: proposta.id,
                     data: proposta.data,
                     loja: proposta.loja,
@@ -1525,7 +1525,7 @@
                     .single();
                 
                 if (cupomDB) {
-                    await supabase.from('cupons').update({
+                    await db.from('cupons').update({
                         usos: (cupomDB.usos || 0) + 1,
                         valor_gerado: (cupomDB.valor_gerado || 0) + valorVenda
                     }).eq('codigo', codigo);
