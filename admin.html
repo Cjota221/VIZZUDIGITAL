@@ -800,7 +800,15 @@
         });
         
         async function carregarDados() {
-            // Tentar carregar do Supabase primeiro
+            // Carregar do localStorage primeiro (backup)
+            let propostasLocal = [];
+            let cuponsLocal = [];
+            try {
+                propostasLocal = JSON.parse(localStorage.getItem('vizzu_propostas') || '[]');
+                cuponsLocal = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]');
+            } catch(e) {}
+            
+            // Tentar carregar do Supabase
             try {
                 // Carregar Propostas
                 const { data: propostasDB, error: errProp } = await db
@@ -808,14 +816,55 @@
                     .select('*')
                     .order('id', { ascending: false });
                 
-                if (!errProp && propostasDB) {
-                    propostas = propostasDB.map(p => ({
-                        ...p,
-                        descontoCupom: p.desconto_cupom,
-                        descontoPix: p.desconto_pix
-                    }));
+                if (!errProp) {
                     dbOnline = true;
-                    console.log('Propostas carregadas do Supabase:', propostas.length);
+                    
+                    // Se Supabase tem dados, usa eles
+                    if (propostasDB && propostasDB.length > 0) {
+                        propostas = propostasDB.map(p => ({
+                            ...p,
+                            descontoCupom: p.desconto_cupom,
+                            descontoPix: p.desconto_pix
+                        }));
+                        console.log('Propostas carregadas do Supabase:', propostas.length);
+                    } 
+                    // Se Supabase vazio mas localStorage tem dados, sincroniza para o Supabase
+                    else if (propostasLocal.length > 0) {
+                        console.log('Supabase vazio! Sincronizando ' + propostasLocal.length + ' propostas do localStorage...');
+                        propostas = propostasLocal;
+                        
+                        // Enviar cada proposta para o Supabase
+                        for (const p of propostasLocal) {
+                            try {
+                                await db.from('propostas').upsert({
+                                    id: p.id,
+                                    data: p.data,
+                                    loja: p.loja,
+                                    cliente: p.cliente,
+                                    telefone: p.telefone,
+                                    site: p.site,
+                                    itens: p.itens,
+                                    banners: p.banners,
+                                    bonus: p.bonus,
+                                    subtotal: p.subtotal,
+                                    total: p.total,
+                                    cupom: p.cupom,
+                                    desconto_cupom: p.descontoCupom || p.desconto_cupom || 0,
+                                    pix: p.pix,
+                                    desconto_pix: p.descontoPix || p.desconto_pix || 0,
+                                    parcelas: p.parcelas,
+                                    prazo: p.prazo,
+                                    status: p.status
+                                });
+                            } catch(e) {
+                                console.error('Erro ao sincronizar proposta:', e);
+                            }
+                        }
+                        console.log('Propostas sincronizadas com Supabase!');
+                        alert('Suas ' + propostasLocal.length + ' propostas foram recuperadas e sincronizadas na nuvem!');
+                    } else {
+                        propostas = [];
+                    }
                 }
                 
                 // Carregar Cupons
@@ -838,13 +887,8 @@
                 dbOnline = false;
                 mostrarStatus('offline');
                 // Fallback para localStorage
-                try {
-                    propostas = JSON.parse(localStorage.getItem('vizzu_propostas') || '[]');
-                    cupons = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]');
-                } catch(e2) {
-                    propostas = [];
-                    cupons = [];
-                }
+                propostas = propostasLocal;
+                cupons = cuponsLocal;
             }
             atualizarTudo();
         }
