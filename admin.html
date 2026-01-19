@@ -1122,30 +1122,39 @@
             
             // Usar subtotal salvo ou calculado
             const subtotal = p.subtotal || subtotalCalculado;
+            const total = p.total || subtotal;
             
-            // Verificar se tem desconto (cupom ou PIX)
-            const temCupom = p.cupom && (p.descontoCupom > 0 || (subtotal > p.total));
+            // Detectar se tem desconto (comparando subtotal com total)
+            const diferencaValor = subtotal - total;
+            const temDesconto = diferencaValor > 0;
+            const temCupom = p.cupom && p.cupom.length > 0;
             const temPix = p.pix === true;
             
-            if (temCupom || temPix) {
+            // Sempre mostrar subtotal se tiver qualquer desconto
+            if (temDesconto) {
                 msg += '\n*Subtotal:* R$' + subtotal.toLocaleString('pt-BR') + '\n';
+                
+                // Se tem cupom aplicado
+                if (temCupom) {
+                    const descontoCupomValor = p.descontoCupom || 0;
+                    const cupomInfo = cupons.find(c => c.codigo === p.cupom);
+                    const porcentagemCupom = cupomInfo ? cupomInfo.desconto : (descontoCupomValor > 0 ? Math.round((descontoCupomValor / subtotal) * 100) : 10);
+                    msg += '*Cupom ' + p.cupom + ':* -' + porcentagemCupom + '% (-R$' + (p.descontoCupom || Math.round(subtotal * porcentagemCupom / 100)).toLocaleString('pt-BR') + ')\n';
+                }
+                
+                // Se pagamento e PIX
+                if (temPix && p.descontoPix > 0) {
+                    msg += '*Desconto PIX:* -5% (-R$' + p.descontoPix.toLocaleString('pt-BR') + ')\n';
+                }
+                
+                // Se tem desconto mas nao sabemos de onde (proposta antiga)
+                if (!temCupom && !temPix && diferencaValor > 0) {
+                    const porcentagemDesc = Math.round((diferencaValor / subtotal) * 100);
+                    msg += '*Desconto especial:* -' + porcentagemDesc + '% (-R$' + diferencaValor.toLocaleString('pt-BR') + ')\n';
+                }
             }
             
-            // Se tem cupom aplicado
-            if (temCupom) {
-                const descontoCupomValor = p.descontoCupom || 0;
-                const cupomInfo = cupons.find(c => c.codigo === p.cupom);
-                const porcentagemCupom = cupomInfo ? cupomInfo.desconto : Math.round((descontoCupomValor / subtotal) * 100);
-                msg += '*Cupom ' + p.cupom + ':* -' + porcentagemCupom + '% (-R$' + descontoCupomValor.toLocaleString('pt-BR') + ')\n';
-            }
-            
-            // Se pagamento e PIX
-            if (temPix) {
-                const descontoPixValor = p.descontoPix || 0;
-                msg += '*Desconto PIX:* -5% (-R$' + descontoPixValor.toLocaleString('pt-BR') + ')\n';
-            }
-            
-            msg += '\n*VALOR FINAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
+            msg += '\n*VALOR FINAL: R$' + total.toLocaleString('pt-BR') + '*';
             msg += '\n*Prazo de entrega:* ' + (p.prazo || 7) + ' dias uteis';
             
             msg += '\n\n---\n\n';
