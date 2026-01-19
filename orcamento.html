@@ -984,6 +984,12 @@ function enviarWhatsApp() {
 }
 
 async function salvarPropostaSupabase(proposta, msgWhatsApp) {
+    // Gerar link da proposta imediatamente
+    const linkProposta = `${window.location.origin}/proposta.html?id=${proposta.id}`;
+    
+    // Mostrar modal com link primeiro (antes de tentar salvar)
+    mostrarLinkProposta(linkProposta);
+    
     try {
         const { data, error } = await db.from('propostas').insert([{
             id: proposta.id,
@@ -1006,24 +1012,22 @@ async function salvarPropostaSupabase(proposta, msgWhatsApp) {
             status: proposta.status
         }]).select();
         
-        if (error) throw error;
-        
-        // Gerar link da proposta
-        const linkProposta = `${window.location.origin}/proposta.html?id=${proposta.id}`;
+        if (error) {
+            console.error('Erro Supabase:', error);
+        } else {
+            console.log('Proposta salva:', data);
+        }
         
         // Adicionar link na mensagem do WhatsApp
         const msgComLink = msgWhatsApp + '\n\n*Link da proposta:*\n' + linkProposta;
-        
         const encoded = encodeURIComponent(msgComLink);
         window.open(`https://wa.me/5562982237075?text=${encoded}`, '_blank');
         
-        // Mostrar link para copiar
-        mostrarLinkProposta(linkProposta);
-        
     } catch(e) {
         console.error('Erro ao salvar proposta:', e);
-        // Mesmo com erro, abre o WhatsApp
-        const encoded = encodeURIComponent(msgWhatsApp);
+        // Mesmo com erro, abre o WhatsApp com link
+        const msgComLink = msgWhatsApp + '\n\n*Link da proposta:*\n' + linkProposta;
+        const encoded = encodeURIComponent(msgComLink);
         window.open(`https://wa.me/5562982237075?text=${encoded}`, '_blank');
     }
 }

@@ -132,7 +132,7 @@ async function carregarPreviews() {
         const { data } = await db.from('previews').select('*');
         if (data) {
             data.forEach(p => {
-                previews[p.nome_aplicacao] = p.html_preview;
+                previews[p.nome] = p.codigo;
             });
         }
     } catch(e) {
