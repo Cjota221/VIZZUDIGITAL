@@ -803,7 +803,7 @@
             // Tentar carregar do Supabase primeiro
             try {
                 // Carregar Propostas
-                const { data: propostasDB, error: errProp } = await supabase
+                const { data: propostasDB, error: errProp } = await db
                     .from('propostas')
                     .select('*')
                     .order('id', { ascending: false });
@@ -819,7 +819,7 @@
                 }
                 
                 // Carregar Cupons
-                const { data: cuponsDB, error: errCup } = await supabase
+                const { data: cuponsDB, error: errCup } = await db
                     .from('cupons')
                     .select('*');
                 
@@ -1084,7 +1084,7 @@
             // Tentar carregar leads do Supabase
             if (dbOnline) {
                 try {
-                    const { data: leadsDB, error } = await supabase
+                    const { data: leadsDB, error } = await db
                         .from('leads')
                         .select('*')
                         .order('id', { ascending: false });
@@ -1790,7 +1790,7 @@
             if (!dbOnline) return;
             try {
                 // Buscar cupom atual
-                const { data: cupomDB } = await supabase
+                const { data: cupomDB } = await db
                     .from('cupons')
                     .select('usos, valor_gerado')
                     .eq('codigo', codigo)
