@@ -546,27 +546,58 @@
     
     <!-- Modal Cupons -->
     <div class="modal-bg" id="modalCupons">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width:750px">
             <div class="modal-top">
-                <h3><i class="fas fa-ticket-alt"></i> Gerenciar Cupons</h3>
+                <h3><i class="fas fa-ticket-alt"></i> Gerenciar Cupons e Indicacoes</h3>
                 <button class="close-btn" id="fecharModalCupons"><i class="fas fa-times"></i></button>
             </div>
             
-            <div class="section-title"><i class="fas fa-plus"></i> Novo Cupom</div>
-            <div class="form-row">
+            <div class="section-title"><i class="fas fa-plus"></i> Novo Cupom de Indicacao</div>
+            <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
                 <div class="form-group">
-                    <label>Codigo</label>
-                    <input type="text" id="inputNovoCupom" placeholder="Ex: PROMO20" style="text-transform:uppercase">
+                    <label>Codigo do Cupom</label>
+                    <input type="text" id="inputNovoCupom" placeholder="Ex: JOAO15" style="text-transform:uppercase">
                 </div>
                 <div class="form-group">
                     <label>Desconto (%)</label>
                     <input type="number" id="inputDescontoCupom" placeholder="Ex: 10" min="1" max="50">
                 </div>
+                <div class="form-group">
+                    <label>Indicador/Origem</label>
+                    <input type="text" id="inputIndicador" placeholder="Ex: Joao Silva">
+                </div>
             </div>
             <button class="btn btn-lime" id="btnCriarCupom" style="width:100%;margin-bottom:20px"><i class="fas fa-plus"></i> Criar Cupom</button>
             
-            <div class="section-title"><i class="fas fa-list"></i> Cupons Ativos</div>
-            <div id="listaCupons"></div>
+            <!-- Estatisticas Gerais -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+                <div style="background:rgba(124,58,237,.15);padding:14px;border-radius:10px;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--primary)" id="statTotalCupons">0</div>
+                    <div style="font-size:.75rem;color:var(--gray)">Cupons Ativos</div>
+                </div>
+                <div style="background:rgba(34,197,94,.15);padding:14px;border-radius:10px;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--green)" id="statUsoCupons">0</div>
+                    <div style="font-size:.75rem;color:var(--gray)">Usos Totais</div>
+                </div>
+                <div style="background:rgba(204,255,0,.15);padding:14px;border-radius:10px;text-align:center">
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--lime)" id="statValorCupons">R$0</div>
+                    <div style="font-size:.75rem;color:var(--gray)">Valor Gerado</div>
+                </div>
+            </div>
+            
+            <div class="section-title"><i class="fas fa-chart-bar"></i> Cupons e Estatisticas de Uso</div>
+            <div id="listaCupons" style="max-height:350px;overflow-y:auto"></div>
+        </div>
+    </div>
+    
+    <!-- Modal Detalhes Cupom -->
+    <div class="modal-bg" id="modalDetalhesCupom">
+        <div class="modal-box" style="max-width:600px">
+            <div class="modal-top">
+                <h3><i class="fas fa-chart-pie"></i> Detalhes do Cupom</h3>
+                <button class="close-btn" id="fecharModalDetalhesCupom"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="detalhesCupomContent"></div>
         </div>
     </div>
     
@@ -1072,38 +1103,49 @@
             }
             
             let msg = 'Ola ' + (p.cliente || '') + '!\n\n';
-            msg += 'Aqui e a *VIZZU DIGITAL*. Montamos uma proposta baseada nas informacoes que tivemos sobre o seu site:\n\n';
+            msg += 'Aqui e a *VIZZU DIGITAL*. Montamos uma proposta especial pra voce:\n\n';
             msg += '*Loja:* ' + (p.loja || 'Nao informado') + '\n\n';
             msg += '*ITENS DA PROPOSTA:*\n';
             
-            let subtotal = 0;
+            let subtotalCalculado = 0;
             if (p.itens) {
                 p.itens.forEach(function(item) {
-                    msg += '• ' + item.nome + ' - R$' + (item.valor || 0).toLocaleString('pt-BR') + '\n';
-                    subtotal += item.valor || 0;
+                    msg += '- ' + item.nome + ' - R$' + (item.valor || 0).toLocaleString('pt-BR') + '\n';
+                    subtotalCalculado += item.valor || 0;
                 });
             }
             if (p.banners > 0) {
                 const valorBanners = precoBanner[p.banners] || 0;
-                msg += '• ' + p.banners + ' Banner(s) - R$' + valorBanners.toLocaleString('pt-BR') + '\n';
-                subtotal += valorBanners;
+                msg += '- ' + p.banners + ' Banner(s) - R$' + valorBanners.toLocaleString('pt-BR') + '\n';
+                subtotalCalculado += valorBanners;
             }
             
-            // Se tem cupom aplicado, mostrar desconto
-            if (p.cupom && p.descontoCupom > 0) {
-                // Calcular a porcentagem do cupom
-                const porcentagemCupom = Math.round((p.descontoCupom / subtotal) * 100);
-                msg += '\n*Subtotal:* R$' + subtotal.toLocaleString('pt-BR');
-                msg += '\n*Cupom aplicado:* ' + p.cupom + ' (-' + porcentagemCupom + '%)';
-                msg += '\n*Desconto:* -R$' + p.descontoCupom.toLocaleString('pt-BR');
+            // Usar subtotal salvo ou calculado
+            const subtotal = p.subtotal || subtotalCalculado;
+            
+            // Verificar se tem desconto (cupom ou PIX)
+            const temCupom = p.cupom && (p.descontoCupom > 0 || (subtotal > p.total));
+            const temPix = p.pix === true;
+            
+            if (temCupom || temPix) {
+                msg += '\n*Subtotal:* R$' + subtotal.toLocaleString('pt-BR') + '\n';
             }
             
-            // Se pagamento e PIX, mostrar desconto adicional
-            if (p.pix && p.descontoPix > 0) {
-                msg += '\n*Pagamento via PIX:* -5% (-R$' + p.descontoPix.toLocaleString('pt-BR') + ')';
+            // Se tem cupom aplicado
+            if (temCupom) {
+                const descontoCupomValor = p.descontoCupom || 0;
+                const cupomInfo = cupons.find(c => c.codigo === p.cupom);
+                const porcentagemCupom = cupomInfo ? cupomInfo.desconto : Math.round((descontoCupomValor / subtotal) * 100);
+                msg += '*Cupom ' + p.cupom + ':* -' + porcentagemCupom + '% (-R$' + descontoCupomValor.toLocaleString('pt-BR') + ')\n';
             }
             
-            msg += '\n\n*VALOR TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
+            // Se pagamento e PIX
+            if (temPix) {
+                const descontoPixValor = p.descontoPix || 0;
+                msg += '*Desconto PIX:* -5% (-R$' + descontoPixValor.toLocaleString('pt-BR') + ')\n';
+            }
+            
+            msg += '\n*VALOR FINAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
             msg += '\n*Prazo de entrega:* ' + (p.prazo || 7) + ' dias uteis';
             
             msg += '\n\n---\n\n';
