@@ -1076,16 +1076,34 @@
             msg += '*Loja:* ' + (p.loja || 'Nao informado') + '\n\n';
             msg += '*ITENS DA PROPOSTA:*\n';
             
+            let subtotal = 0;
             if (p.itens) {
                 p.itens.forEach(function(item) {
                     msg += '• ' + item.nome + ' - R$' + (item.valor || 0).toLocaleString('pt-BR') + '\n';
+                    subtotal += item.valor || 0;
                 });
             }
             if (p.banners > 0) {
-                msg += '• ' + p.banners + ' Banner(s) - R$' + (precoBanner[p.banners] || 0).toLocaleString('pt-BR') + '\n';
+                const valorBanners = precoBanner[p.banners] || 0;
+                msg += '• ' + p.banners + ' Banner(s) - R$' + valorBanners.toLocaleString('pt-BR') + '\n';
+                subtotal += valorBanners;
             }
             
-            msg += '\n*VALOR TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
+            // Se tem cupom aplicado, mostrar desconto
+            if (p.cupom && p.desconto > 0) {
+                msg += '\n*Subtotal:* R$' + subtotal.toLocaleString('pt-BR');
+                msg += '\n*Cupom aplicado:* ' + p.cupom + ' (-' + p.desconto + '%)';
+                msg += '\n*Desconto:* -R$' + Math.round(subtotal * p.desconto / 100).toLocaleString('pt-BR');
+            }
+            
+            // Se pagamento e PIX, mostrar desconto adicional
+            if (p.pagamento === 'pix') {
+                const valorAntesDescPix = p.cupom ? subtotal - Math.round(subtotal * p.desconto / 100) : subtotal;
+                const descontoPix = Math.round(valorAntesDescPix * 0.05);
+                msg += '\n*Pagamento via PIX:* -5% (-R$' + descontoPix.toLocaleString('pt-BR') + ')';
+            }
+            
+            msg += '\n\n*VALOR TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
             msg += '\n*Prazo de entrega:* ' + (p.prazo || 7) + ' dias uteis';
             
             msg += '\n\n---\n\n';
