@@ -382,6 +382,9 @@
                 <button class="btn btn-primary" id="btnNovaProposta">
                     <i class="fas fa-plus"></i> Nova Proposta
                 </button>
+                <button class="btn btn-outline" id="btnLeads">
+                    <i class="fas fa-users"></i> Leads
+                </button>
                 <button class="btn btn-outline" id="btnCupons">
                     <i class="fas fa-ticket-alt"></i> Cupons
                 </button>
@@ -567,6 +570,31 @@
         </div>
     </div>
     
+    <!-- Modal Leads -->
+    <div class="modal-bg" id="modalLeads">
+        <div class="modal-box" style="max-width:700px">
+            <div class="modal-top">
+                <h3><i class="fas fa-users"></i> Leads Capturados</h3>
+                <button class="close-btn" id="fecharModalLeads"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+                <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--dark3);border-radius:8px">
+                    <i class="fas fa-search" style="color:var(--gray)"></i>
+                    <input type="text" id="buscaLead" placeholder="Buscar lead..." style="background:none;border:none;color:var(--white);font-size:0.9rem;width:150px">
+                </div>
+                <button class="btn btn-outline" id="btnExportLeads" style="padding:8px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Exportar</button>
+            </div>
+            
+            <div style="background:rgba(204,255,0,.1);border:1px solid var(--lime);border-radius:10px;padding:12px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+                <i class="fas fa-chart-line" style="color:var(--lime);font-size:1.2rem"></i>
+                <span style="color:var(--lime);font-weight:600" id="totalLeads">0 leads capturados</span>
+            </div>
+            
+            <div id="listaLeads" style="max-height:400px;overflow-y:auto"></div>
+        </div>
+    </div>
+    
     <!-- Modal Detalhes -->
     <div class="modal-bg" id="modalDetalhes">
         <div class="modal-box">
@@ -694,6 +722,15 @@
             });
             document.getElementById('btnCriarCupom').addEventListener('click', criarCupom);
             
+            // Botao Leads
+            document.getElementById('btnLeads').addEventListener('click', abrirModalLeads);
+            document.getElementById('fecharModalLeads').addEventListener('click', fecharModalLeads);
+            document.getElementById('modalLeads').addEventListener('click', function(e) {
+                if (e.target === this) fecharModalLeads();
+            });
+            document.getElementById('buscaLead').addEventListener('input', renderizarLeads);
+            document.getElementById('btnExportLeads').addEventListener('click', exportarLeads);
+            
             // Fechar Modal Nova
             document.getElementById('fecharModalNova').addEventListener('click', fecharModalNova);
             document.getElementById('modalNova').addEventListener('click', function(e) {
@@ -815,6 +852,85 @@
                 renderizarCupons();
             }
         };
+        
+        // ===== LEADS =====
+        function abrirModalLeads() {
+            renderizarLeads();
+            document.getElementById('modalLeads').classList.add('show');
+        }
+        
+        function fecharModalLeads() {
+            document.getElementById('modalLeads').classList.remove('show');
+        }
+        
+        function getLeads() {
+            return JSON.parse(localStorage.getItem('vizzu_leads') || '[]');
+        }
+        
+        function renderizarLeads() {
+            const leads = getLeads();
+            const busca = document.getElementById('buscaLead').value.toLowerCase();
+            const container = document.getElementById('listaLeads');
+            
+            const filtrados = leads.filter(l => 
+                l.nome.toLowerCase().includes(busca) || 
+                (l.loja && l.loja.toLowerCase().includes(busca)) ||
+                l.telefone.includes(busca)
+            );
+            
+            document.getElementById('totalLeads').textContent = leads.length + ' lead' + (leads.length !== 1 ? 's' : '') + ' capturado' + (leads.length !== 1 ? 's' : '');
+            
+            if (filtrados.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray)"><i class="fas fa-users" style="font-size:2rem;margin-bottom:12px;display:block;opacity:.5"></i>Nenhum lead encontrado</div>';
+                return;
+            }
+            
+            let html = '';
+            filtrados.reverse().forEach((lead, idx) => {
+                const realIdx = leads.length - 1 - idx;
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;margin-bottom:8px">';
+                html += '<div style="flex:1">';
+                html += '<div style="font-weight:600;margin-bottom:4px">' + lead.nome + '</div>';
+                if (lead.loja) html += '<div style="font-size:.8rem;color:var(--lime);margin-bottom:2px"><i class="fas fa-store"></i> ' + lead.loja + '</div>';
+                html += '<div style="font-size:.8rem;color:var(--gray)"><i class="fas fa-phone"></i> ' + lead.telefone + '</div>';
+                html += '<div style="font-size:.7rem;color:var(--gray);margin-top:4px"><i class="fas fa-calendar"></i> ' + (lead.data || 'N/A') + '</div>';
+                html += '</div>';
+                html += '<div style="display:flex;gap:6px">';
+                html += '<a href="https://wa.me/55' + lead.telefone.replace(/\D/g,'') + '?text=Oi%20' + encodeURIComponent(lead.nome) + '!%20Tudo%20bem?" class="action-btn wpp" title="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>';
+                html += '<button class="action-btn del" onclick="excluirLead(' + realIdx + ')" title="Excluir"><i class="fas fa-trash"></i></button>';
+                html += '</div>';
+                html += '</div>';
+            });
+            container.innerHTML = html;
+        }
+        
+        window.excluirLead = function(idx) {
+            if (confirm('Excluir este lead?')) {
+                const leads = getLeads();
+                leads.splice(idx, 1);
+                localStorage.setItem('vizzu_leads', JSON.stringify(leads));
+                renderizarLeads();
+            }
+        };
+        
+        function exportarLeads() {
+            const leads = getLeads();
+            if (leads.length === 0) { alert('Nenhum lead para exportar!'); return; }
+            
+            let csv = 'Nome,Loja,Telefone,Cupom,Data\n';
+            leads.forEach(l => {
+                csv += '"' + l.nome + '","' + (l.loja || '') + '","' + l.telefone + '","' + (l.cupom || '') + '","' + (l.data || '') + '"\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'leads_vizzu_' + new Date().toISOString().slice(0,10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            trackEvent('export', 'Leads', 'CSV');
+        }
         
         function aplicarCupomProposta() {
             const codigo = document.getElementById('inputCupomProposta').value.trim().toUpperCase();
