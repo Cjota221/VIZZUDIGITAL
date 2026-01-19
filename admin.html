@@ -14,6 +14,8 @@
       gtag('event', action, { 'event_category': category, 'event_label': label });
     }
     </script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>Admin VIZZU</title>
     <link rel="icon" href="https://i.ibb.co/7dZ9GK5M/VIZZU.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -394,6 +396,9 @@
                 <a href="index.html" class="btn btn-outline">
                     <i class="fas fa-globe"></i> Site
                 </a>
+                <span id="dbStatus" style="font-size:.75rem;padding:8px 12px;border-radius:8px;background:var(--dark3)">
+                    <i class="fas fa-spinner fa-spin"></i> Conectando...
+                </span>
             </div>
         </header>
         
@@ -701,6 +706,11 @@
     </div>
 
     <script>
+        // ===== SUPABASE CONFIG =====
+        const SUPABASE_URL = 'https://kvpetrexgrpizwfomjjt.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cGV0cmV4Z3JwaXp3Zm9tamp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MzkzNjUsImV4cCI6MjA4NDQxNTM2NX0.kP9TQqYIiPchtd7Y89oQdg78nZw4GBiTvLhxhz1vWs8';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         // ===== DADOS =====
         let propostas = [];
         let cupons = [];
@@ -713,6 +723,7 @@
         let editItens = [];
         let editBanners = 0;
         const precoBanner = { 0: 0, 1: 120, 3: 300, 5: 450 };
+        let dbOnline = false;
         
         // ===== INICIALIZAÇÃO =====
         document.addEventListener('DOMContentLoaded', function() {
@@ -721,15 +732,67 @@
             setupEventos();
         });
         
-        function carregarDados() {
+        async function carregarDados() {
+            // Tentar carregar do Supabase primeiro
             try {
-                propostas = JSON.parse(localStorage.getItem('vizzu_propostas') || '[]');
-                cupons = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]');
+                // Carregar Propostas
+                const { data: propostasDB, error: errProp } = await supabase
+                    .from('propostas')
+                    .select('*')
+                    .order('id', { ascending: false });
+                
+                if (!errProp && propostasDB) {
+                    propostas = propostasDB.map(p => ({
+                        ...p,
+                        descontoCupom: p.desconto_cupom,
+                        descontoPix: p.desconto_pix
+                    }));
+                    dbOnline = true;
+                    console.log('Propostas carregadas do Supabase:', propostas.length);
+                }
+                
+                // Carregar Cupons
+                const { data: cuponsDB, error: errCup } = await supabase
+                    .from('cupons')
+                    .select('*');
+                
+                if (!errCup && cuponsDB) {
+                    cupons = cuponsDB;
+                    console.log('Cupons carregados do Supabase:', cupons.length);
+                }
+                
+                // Sincronizar localStorage com DB
+                localStorage.setItem('vizzu_propostas', JSON.stringify(propostas));
+                localStorage.setItem('vizzu_cupons', JSON.stringify(cupons));
+                
+                mostrarStatus('online');
             } catch(e) {
-                propostas = [];
-                cupons = [];
+                console.log('Erro Supabase, usando localStorage:', e);
+                dbOnline = false;
+                mostrarStatus('offline');
+                // Fallback para localStorage
+                try {
+                    propostas = JSON.parse(localStorage.getItem('vizzu_propostas') || '[]');
+                    cupons = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]');
+                } catch(e2) {
+                    propostas = [];
+                    cupons = [];
+                }
             }
             atualizarTudo();
+        }
+        
+        function mostrarStatus(status) {
+            const el = document.getElementById('dbStatus');
+            if (el) {
+                if (status === 'online') {
+                    el.innerHTML = '<i class="fas fa-cloud"></i> Online';
+                    el.style.color = '#22c55e';
+                } else {
+                    el.innerHTML = '<i class="fas fa-cloud-slash"></i> Offline';
+                    el.style.color = '#f59e0b';
+                }
+            }
         }
         
         function atualizarTudo() {
@@ -836,6 +899,7 @@
         // ===== CUPONS =====
         function abrirModalCupons() {
             renderizarCupons();
+            atualizarStatsCupons();
             document.getElementById('modalCupons').classList.add('show');
         }
         
@@ -843,41 +907,93 @@
             document.getElementById('modalCupons').classList.remove('show');
         }
         
-        function criarCupom() {
+        async function criarCupom() {
             const codigo = document.getElementById('inputNovoCupom').value.trim().toUpperCase();
             const desconto = parseInt(document.getElementById('inputDescontoCupom').value);
+            const indicador = document.getElementById('inputIndicador').value.trim();
             
             if (!codigo) { alert('Digite o codigo do cupom!'); return; }
             if (!desconto || desconto < 1 || desconto > 50) { alert('Desconto deve ser entre 1% e 50%!'); return; }
             if (cupons.find(c => c.codigo === codigo)) { alert('Cupom ja existe!'); return; }
             
-            cupons.push({ codigo, desconto });
+            const novoCupom = { codigo, desconto, indicador: indicador || null, usos: 0, valor_gerado: 0 };
+            
+            // Salvar no Supabase
+            if (dbOnline) {
+                try {
+                    const { error } = await supabase.from('cupons').insert(novoCupom);
+                    if (error) console.error('Erro ao criar cupom:', error);
+                    else console.log('Cupom criado no Supabase!');
+                } catch(e) {
+                    console.error('Erro Supabase:', e);
+                }
+            }
+            
+            cupons.push(novoCupom);
             localStorage.setItem('vizzu_cupons', JSON.stringify(cupons));
             
             document.getElementById('inputNovoCupom').value = '';
             document.getElementById('inputDescontoCupom').value = '';
+            document.getElementById('inputIndicador').value = '';
             renderizarCupons();
+            atualizarStatsCupons();
+        }
+        
+        function atualizarStatsCupons() {
+            const totalCupons = cupons.length;
+            const totalUsos = cupons.reduce((acc, c) => acc + (c.usos || 0), 0);
+            const valorGerado = cupons.reduce((acc, c) => acc + (c.valor_gerado || 0), 0);
+            
+            document.getElementById('statTotalCupons').textContent = totalCupons;
+            document.getElementById('statUsoCupons').textContent = totalUsos;
+            document.getElementById('statValorCupons').textContent = 'R$' + valorGerado.toLocaleString('pt-BR');
         }
         
         function renderizarCupons() {
             const container = document.getElementById('listaCupons');
             if (cupons.length === 0) {
-                container.innerHTML = '<p style="color:var(--gray);font-size:.85rem">Nenhum cupom cadastrado</p>';
+                container.innerHTML = '<p style="color:var(--gray);font-size:.85rem;text-align:center;padding:20px">Nenhum cupom cadastrado</p>';
+                document.getElementById('statTotalCupons').textContent = '0';
+                document.getElementById('statUsoCupons').textContent = '0';
+                document.getElementById('statValorCupons').textContent = 'R$0';
                 return;
             }
             
             let html = '';
             cupons.forEach((c, idx) => {
-                html += '<div class="cupom-item">';
-                html += '<div><span class="cupom-code">' + c.codigo + '</span><br><span class="cupom-desc">' + c.desconto + '% de desconto</span></div>';
-                html += '<button class="btn-del" onclick="excluirCupom(' + idx + ')"><i class="fas fa-trash"></i></button>';
+                html += '<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;margin-bottom:10px">';
+                html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
+                html += '<div>';
+                html += '<span style="font-weight:700;color:var(--lime);font-size:1.1rem">' + c.codigo + '</span>';
+                html += '<span style="background:var(--primary);color:#fff;padding:3px 8px;border-radius:10px;font-size:.7rem;margin-left:8px">' + c.desconto + '% OFF</span>';
+                html += '</div>';
+                html += '<button class="btn-del" onclick="excluirCupom(' + idx + ')" style="background:rgba(239,68,68,.1);color:var(--red);padding:6px 10px;border:none;border-radius:6px;cursor:pointer"><i class="fas fa-trash"></i></button>';
+                html += '</div>';
+                if (c.indicador) {
+                    html += '<div style="font-size:.8rem;color:var(--gray);margin-bottom:8px"><i class="fas fa-user"></i> Indicador: <strong style="color:var(--white)">' + c.indicador + '</strong></div>';
+                }
+                html += '<div style="display:flex;gap:16px;font-size:.8rem">';
+                html += '<div style="background:rgba(34,197,94,.1);padding:6px 10px;border-radius:6px"><i class="fas fa-shopping-cart" style="color:var(--green)"></i> <strong>' + (c.usos || 0) + '</strong> usos</div>';
+                html += '<div style="background:rgba(204,255,0,.1);padding:6px 10px;border-radius:6px"><i class="fas fa-dollar-sign" style="color:var(--lime)"></i> <strong>R$' + (c.valor_gerado || 0).toLocaleString('pt-BR') + '</strong> gerado</div>';
+                html += '</div>';
                 html += '</div>';
             });
             container.innerHTML = html;
         }
         
-        window.excluirCupom = function(idx) {
+        window.excluirCupom = async function(idx) {
             if (confirm('Excluir este cupom?')) {
+                const cupom = cupons[idx];
+                
+                // Excluir do Supabase
+                if (dbOnline && cupom) {
+                    try {
+                        await supabase.from('cupons').delete().eq('codigo', cupom.codigo);
+                        console.log('Cupom excluido do Supabase!');
+                    } catch(e) {
+                        console.error('Erro ao excluir cupom:', e);
+                    }
+                }
                 cupons.splice(idx, 1);
                 localStorage.setItem('vizzu_cupons', JSON.stringify(cupons));
                 renderizarCupons();
@@ -885,7 +1001,23 @@
         };
         
         // ===== LEADS =====
-        function abrirModalLeads() {
+        async function abrirModalLeads() {
+            // Tentar carregar leads do Supabase
+            if (dbOnline) {
+                try {
+                    const { data: leadsDB, error } = await supabase
+                        .from('leads')
+                        .select('*')
+                        .order('id', { ascending: false });
+                    
+                    if (!error && leadsDB) {
+                        localStorage.setItem('vizzu_leads', JSON.stringify(leadsDB));
+                        console.log('Leads carregados do Supabase:', leadsDB.length);
+                    }
+                } catch(e) {
+                    console.error('Erro ao carregar leads:', e);
+                }
+            }
             renderizarLeads();
             document.getElementById('modalLeads').classList.add('show');
         }
@@ -935,9 +1067,21 @@
             container.innerHTML = html;
         }
         
-        window.excluirLead = function(idx) {
+        window.excluirLead = async function(idx) {
             if (confirm('Excluir este lead?')) {
                 const leads = getLeads();
+                const lead = leads[idx];
+                
+                // Excluir do Supabase
+                if (dbOnline && lead && lead.id) {
+                    try {
+                        await supabase.from('leads').delete().eq('id', lead.id);
+                        console.log('Lead excluido do Supabase!');
+                    } catch(e) {
+                        console.error('Erro ao excluir lead:', e);
+                    }
+                }
+                
                 leads.splice(idx, 1);
                 localStorage.setItem('vizzu_leads', JSON.stringify(leads));
                 renderizarLeads();
@@ -1311,8 +1455,16 @@
                 status: 'Pendente'
             };
             
+            // Salvar no Supabase
+            salvarPropostaDB(proposta);
+            
             propostas.unshift(proposta);
             localStorage.setItem('vizzu_propostas', JSON.stringify(propostas));
+            
+            // Atualizar uso do cupom
+            if (cupomAtual) {
+                atualizarUsoCupom(cupomAtual.codigo, Math.round(total));
+            }
             
             // Reset cupom e pagamento
             cupomAtual = null;
@@ -1327,6 +1479,60 @@
             
             if (confirm('Proposta salva!\n\nEnviar pelo WhatsApp agora?')) {
                 enviarWpp(proposta.id);
+            }
+        }
+        
+        // Salvar proposta no Supabase
+        async function salvarPropostaDB(proposta) {
+            if (!dbOnline) return;
+            try {
+                const { error } = await supabase.from('propostas').insert({
+                    id: proposta.id,
+                    data: proposta.data,
+                    loja: proposta.loja,
+                    cliente: proposta.cliente,
+                    telefone: proposta.telefone,
+                    site: proposta.site,
+                    itens: proposta.itens,
+                    banners: proposta.banners,
+                    bonus: proposta.bonus,
+                    subtotal: proposta.subtotal,
+                    total: proposta.total,
+                    cupom: proposta.cupom,
+                    desconto_cupom: proposta.descontoCupom,
+                    pix: proposta.pix,
+                    desconto_pix: proposta.descontoPix,
+                    parcelas: proposta.parcelas,
+                    prazo: proposta.prazo,
+                    status: proposta.status
+                });
+                if (error) console.error('Erro ao salvar proposta:', error);
+                else console.log('Proposta salva no Supabase!');
+            } catch(e) {
+                console.error('Erro Supabase:', e);
+            }
+        }
+        
+        // Atualizar uso do cupom
+        async function atualizarUsoCupom(codigo, valorVenda) {
+            if (!dbOnline) return;
+            try {
+                // Buscar cupom atual
+                const { data: cupomDB } = await supabase
+                    .from('cupons')
+                    .select('usos, valor_gerado')
+                    .eq('codigo', codigo)
+                    .single();
+                
+                if (cupomDB) {
+                    await supabase.from('cupons').update({
+                        usos: (cupomDB.usos || 0) + 1,
+                        valor_gerado: (cupomDB.valor_gerado || 0) + valorVenda
+                    }).eq('codigo', codigo);
+                    console.log('Uso do cupom atualizado!');
+                }
+            } catch(e) {
+                console.error('Erro ao atualizar cupom:', e);
             }
         }
         

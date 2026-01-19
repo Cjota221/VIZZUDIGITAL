@@ -19,6 +19,13 @@ function trackEvent(action, category, label) {
   });
 }
 </script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://kvpetrexgrpizwfomjjt.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cGV0cmV4Z3JwaXp3Zm9tamp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MzkzNjUsImV4cCI6MjA4NDQxNTM2NX0.kP9TQqYIiPchtd7Y89oQdg78nZw4GBiTvLhxhz1vWs8';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -637,12 +644,20 @@ trackEvent('click', 'Cupom', 'Copiou VIZZU10');
 }
 
 // Lead form
-function submitLead(e){
+async function submitLead(e){
 e.preventDefault();
 const lead={id:Date.now(),nome:document.getElementById('nome').value,loja:document.getElementById('nomeLoja').value||'',telefone:document.getElementById('telefone').value,status:'novo',cupom:'VIZZU10',data:new Date().toLocaleString('pt-BR')};
+
+// Salvar no localStorage
 let leads=JSON.parse(localStorage.getItem('vizzu_leads')||'[]');
 leads.push(lead);
 localStorage.setItem('vizzu_leads',JSON.stringify(leads));
+
+// Salvar no Supabase
+try{
+await supabase.from('leads').insert(lead);
+console.log('Lead salvo no Supabase!');
+}catch(err){console.log('Erro ao salvar lead:',err)}
 
 // Criar cupom VIZZU10 se nao existir
 let cupons=JSON.parse(localStorage.getItem('vizzu_cupons')||'[]');
