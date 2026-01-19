@@ -554,21 +554,38 @@ img{max-width:100%;height:auto;display:block}
 <div class="modal">
 <div class="modal-handle"></div>
 <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+
+<!-- Tela 1: Formulario -->
+<div id="modalForm">
 <div style="text-align:center;margin-bottom:20px">
 <div style="width:70px;height:70px;background:linear-gradient(135deg,var(--lime),#a8e600);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.8rem;color:var(--dark)"><i class="fas fa-gift"></i></div>
 <h3 style="font-size:1.4rem;margin-bottom:8px">Ganhe <span style="color:var(--lime)">10% OFF</span></h3>
-<p style="color:var(--gray);font-size:.9rem">Preencha seus dados e receba o cupom <strong style="color:var(--lime)">VIZZU10</strong> no WhatsApp!</p>
+<p style="color:var(--gray);font-size:.9rem">Preencha seus dados para desbloquear seu cupom exclusivo!</p>
 </div>
 <form id="leadForm" onsubmit="submitLead(event)">
 <div class="form-group"><label>Seu Nome</label><input type="text" id="nome" placeholder="Como podemos te chamar?" required></div>
 <div class="form-group"><label>Nome da sua Loja</label><input type="text" id="nomeLoja" placeholder="Ex: Moda Fashion"></div>
 <div class="form-group"><label>WhatsApp</label><input type="tel" id="telefone" placeholder="(00) 00000-0000" required></div>
-<div class="form-submit"><button type="submit" class="btn btn-lime btn-full"><i class="fas fa-unlock"></i> Liberar meu Cupom</button></div>
+<div class="form-submit"><button type="submit" class="btn btn-lime btn-full"><i class="fas fa-unlock"></i> Desbloquear meu Cupom</button></div>
 </form>
-<div style="text-align:center;margin-top:16px;padding:12px;background:rgba(204,255,0,.1);border:1px dashed var(--lime);border-radius:10px">
-<span style="color:var(--lime);font-weight:600;font-size:.9rem"><i class="fas fa-tag"></i> Cupom: VIZZU10 = 10% de desconto</span>
-</div>
 <p style="text-align:center;color:var(--gray);font-size:.75rem;margin-top:12px"><i class="fas fa-lock"></i> Seus dados estao seguros</p>
+</div>
+
+<!-- Tela 2: Cupom Revelado (escondida inicialmente) -->
+<div id="modalCupom" style="display:none;text-align:center">
+<div style="width:80px;height:80px;background:linear-gradient(135deg,var(--lime),#a8e600);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;color:var(--dark)"><i class="fas fa-check"></i></div>
+<h3 style="font-size:1.5rem;margin-bottom:8px;color:var(--lime)">Parabens!</h3>
+<p style="color:var(--gray);font-size:.95rem;margin-bottom:20px">Seu cupom foi desbloqueado com sucesso!</p>
+<div style="background:var(--dark);border:2px dashed var(--lime);border-radius:16px;padding:24px;margin-bottom:20px">
+<p style="color:var(--gray);font-size:.8rem;margin-bottom:8px">SEU CUPOM DE DESCONTO:</p>
+<div style="font-size:2rem;font-weight:700;color:var(--lime);letter-spacing:4px">VIZZU10</div>
+<p style="color:var(--lime);font-size:1.1rem;margin-top:8px;font-weight:600">10% OFF</p>
+</div>
+<p style="color:var(--gray);font-size:.85rem;margin-bottom:16px">Use esse codigo na hora de fazer seu orcamento!</p>
+<button onclick="copiarCupom()" class="btn btn-outline" style="margin-bottom:12px;width:100%"><i class="fas fa-copy"></i> Copiar Cupom</button>
+<a href="orcamento.html" class="btn btn-lime btn-full"><i class="fas fa-arrow-right"></i> Fazer Meu Orcamento</a>
+</div>
+
 </div>
 </div>
 
@@ -602,9 +619,22 @@ const header=document.querySelector('.header');
 window.addEventListener('scroll',()=>{header.style.boxShadow=window.scrollY>50?'0 2px 20px rgba(0,0,0,.3)':'none'},{passive:true});
 
 // Modal
-function openModal(){document.getElementById('modal').classList.add('active');document.body.style.overflow='hidden'}
+function openModal(){
+document.getElementById('modal').classList.add('active');
+document.body.style.overflow='hidden';
+// Resetar para tela do formulario
+document.getElementById('modalForm').style.display='block';
+document.getElementById('modalCupom').style.display='none';
+}
 function closeModal(){document.getElementById('modal').classList.remove('active');document.body.style.overflow=''}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+// Copiar cupom
+function copiarCupom(){
+navigator.clipboard.writeText('VIZZU10');
+alert('Cupom VIZZU10 copiado!');
+trackEvent('click', 'Cupom', 'Copiou VIZZU10');
+}
 
 // Lead form
 function submitLead(e){
@@ -621,11 +651,10 @@ cupons.push({codigo:'VIZZU10',desconto:10});
 localStorage.setItem('vizzu_cupons',JSON.stringify(cupons));
 }
 
-closeModal();
+// Mostrar tela do cupom
+document.getElementById('modalForm').style.display='none';
+document.getElementById('modalCupom').style.display='block';
 trackEvent('lead', 'Formulario', 'Cupom VIZZU10');
-const tel=lead.telefone.replace(/\D/g,'');
-const msg=encodeURIComponent('Oi! Sou ' + lead.nome + (lead.loja ? ' da loja ' + lead.loja : '') + ' e quero usar meu cupom VIZZU10 de 10% OFF!');
-window.open('https://wa.me/5562982237075?text=' + msg,'_blank');
 }
 
 // FAQ toggle
