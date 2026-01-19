@@ -527,7 +527,7 @@
                     <input type="text" id="inputCupomProposta" placeholder="Ex: DESCONTO10" style="text-transform:uppercase">
                 </div>
                 <div class="form-group" style="justify-content:flex-end">
-                    <button class="btn btn-outline" id="btnAplicarCupom" style="margin-top:auto">Aplicar</button>
+                    <button type="button" class="btn btn-outline" id="btnAplicarCupom" style="margin-top:auto">Aplicar</button>
                 </div>
             </div>
             <div id="cupomAplicado" style="display:none;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.85rem;color:#22c55e"></div>
@@ -749,7 +749,7 @@
                     <input type="text" id="editCupom" placeholder="Codigo do cupom" style="text-transform:uppercase">
                 </div>
                 <div class="form-group" style="justify-content:flex-end">
-                    <button class="btn btn-outline" id="btnAplicarCupomEdit" style="margin-top:auto">Aplicar</button>
+                    <button type="button" class="btn btn-outline" id="btnAplicarCupomEdit" style="margin-top:auto">Aplicar</button>
                     <button class="btn btn-outline" id="btnRemoverCupomEdit" style="margin-top:auto;margin-left:8px;color:var(--red);border-color:var(--red)">Remover</button>
                 </div>
             </div>
@@ -1426,15 +1426,27 @@
         
         function aplicarCupomProposta() {
             const codigo = document.getElementById('inputCupomProposta').value.trim().toUpperCase();
-            const cupom = cupons.find(c => c.codigo === codigo);
             
-            if (!codigo) { alert('Digite um codigo de cupom!'); return; }
-            if (!cupom) { alert('Cupom invalido!'); return; }
+            console.log('Tentando aplicar cupom:', codigo);
+            console.log('Cupons disponiveis:', cupons.map(c => c.codigo));
+            
+            if (!codigo) { 
+                alert('Digite um codigo de cupom!'); 
+                return; 
+            }
+            
+            const cupom = cupons.find(c => c.codigo.toUpperCase() === codigo);
+            
+            if (!cupom) { 
+                alert('Cupom "' + codigo + '" nao encontrado!\n\nCupons disponiveis: ' + (cupons.length > 0 ? cupons.map(c => c.codigo).join(', ') : 'Nenhum cupom cadastrado')); 
+                return; 
+            }
             
             cupomAtual = cupom;
             document.getElementById('cupomAplicado').innerHTML = '<i class="fas fa-check-circle"></i> Cupom ' + cupom.codigo + ' aplicado: ' + cupom.desconto + '% de desconto';
             document.getElementById('cupomAplicado').style.display = 'block';
             calcularTotal();
+            console.log('Cupom aplicado com sucesso:', cupom);
         }
         
         // ===== STATS =====
