@@ -601,10 +601,10 @@
                 html += '<td>' + (p.data || '-') + '</td>';
                 html += '<td><div class="valor">R$' + (p.total || 0).toLocaleString('pt-BR') + '</div></td>';
                 html += '<td><select class="status-select" onchange="mudarStatus(' + p.id + ', this.value)">';
-                html += '<option value="Pendente"' + (p.status === 'Pendente' ? ' selected' : '') + '>⏳ Pendente</option>';
-                html += '<option value="Aprovado"' + (p.status === 'Aprovado' ? ' selected' : '') + '>✅ Aprovado</option>';
-                html += '<option value="Recusado"' + (p.status === 'Recusado' ? ' selected' : '') + '>❌ Recusado</option>';
-                html += '<option value="Entregue"' + (p.status === 'Entregue' ? ' selected' : '') + '>🎁 Entregue</option>';
+                html += '<option value="Pendente"' + (p.status === 'Pendente' ? ' selected' : '') + '>Pendente</option>';
+                html += '<option value="Aprovado"' + (p.status === 'Aprovado' ? ' selected' : '') + '>Aprovado</option>';
+                html += '<option value="Recusado"' + (p.status === 'Recusado' ? ' selected' : '') + '>Recusado</option>';
+                html += '<option value="Entregue"' + (p.status === 'Entregue' ? ' selected' : '') + '>Entregue</option>';
                 html += '</select></td>';
                 html += '<td><div class="actions">';
                 html += '<button class="action-btn ver" onclick="verDetalhes(' + p.id + ')" title="Ver"><i class="fas fa-eye"></i></button>';
@@ -674,11 +674,11 @@
             const p = propostas.find(prop => prop.id === id);
             if (!p) return;
             
-            let msg = '✨ *PROPOSTA VIZZU DIGITAL*\n\n';
-            msg += '🏪 *Loja:* ' + (p.loja || 'Não informado') + '\n';
-            msg += '👤 *Cliente:* ' + (p.cliente || 'Cliente') + '\n';
-            if (p.telefone) msg += '📱 *WhatsApp:* ' + p.telefone + '\n';
-            msg += '\n📋 *ITENS:*\n';
+            let msg = '*PROPOSTA VIZZU DIGITAL*\n\n';
+            msg += '*Loja:* ' + (p.loja || 'Não informado') + '\n';
+            msg += '*Cliente:* ' + (p.cliente || 'Cliente') + '\n';
+            if (p.telefone) msg += '*WhatsApp:* ' + p.telefone + '\n';
+            msg += '\n*ITENS:*\n';
             
             if (p.itens) {
                 p.itens.forEach(function(item) {
@@ -689,8 +689,8 @@
                 msg += '• ' + p.banners + ' Banner(s) - R$' + (precoBanner[p.banners] || 0).toLocaleString('pt-BR') + '\n';
             }
             
-            msg += '\n💰 *TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
-            msg += '\n📅 *Prazo:* ' + (p.prazo || 7) + ' dias úteis';
+            msg += '\n*TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
+            msg += '\n*Prazo:* ' + (p.prazo || 7) + ' dias uteis';
             
             window.open('https://wa.me/5562982237075?text=' + encodeURIComponent(msg), '_blank');
         };
@@ -801,7 +801,7 @@
             fecharModalNova();
             atualizarTudo();
             
-            if (confirm('✅ Proposta salva!\n\nEnviar pelo WhatsApp agora?')) {
+            if (confirm('Proposta salva!\n\nEnviar pelo WhatsApp agora?')) {
                 enviarWpp(proposta.id);
             }
         }
