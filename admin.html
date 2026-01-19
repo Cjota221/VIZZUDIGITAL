@@ -330,6 +330,33 @@
         }
         .detail-list-item:last-child { border-bottom: none; }
         .detail-list-item span:last-child { font-weight: 600; color: var(--lime); }
+        
+        /* Pagamento e Cupom */
+        .pagamento-btn {
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .pagamento-btn:hover { border-color: var(--primary); }
+        .pagamento-btn.selected { border-color: var(--lime); background: rgba(204,255,0,0.1); color: var(--lime); }
+        
+        .cupom-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .cupom-item .cupom-code { font-weight: 600; color: var(--lime); }
+        .cupom-item .cupom-desc { font-size: 0.85rem; color: var(--gray); }
+        .cupom-item .btn-del { background: rgba(239,68,68,0.1); color: var(--red); padding: 8px 12px; border-radius: 6px; cursor: pointer; border: none; }
     </style>
 </head>
 <body>
@@ -342,6 +369,9 @@
             <div class="header-btns">
                 <button class="btn btn-primary" id="btnNovaProposta">
                     <i class="fas fa-plus"></i> Nova Proposta
+                </button>
+                <button class="btn btn-outline" id="btnCupons">
+                    <i class="fas fa-ticket-alt"></i> Cupons
                 </button>
                 <a href="orcamento.html" class="btn btn-lime">
                     <i class="fas fa-external-link-alt"></i> Gerador
@@ -469,9 +499,59 @@
                 <p id="parcelasInfo">Selecione os itens</p>
             </div>
             
+            <div class="section-title"><i class="fas fa-ticket-alt"></i> Cupom de Desconto</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Codigo do Cupom</label>
+                    <input type="text" id="inputCupomProposta" placeholder="Ex: DESCONTO10" style="text-transform:uppercase">
+                </div>
+                <div class="form-group" style="justify-content:flex-end">
+                    <button class="btn btn-outline" id="btnAplicarCupom" style="margin-top:auto">Aplicar</button>
+                </div>
+            </div>
+            <div id="cupomAplicado" style="display:none;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.85rem;color:#22c55e"></div>
+            
+            <div class="section-title"><i class="fas fa-credit-card"></i> Forma de Pagamento</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                <div class="pagamento-btn selected" data-tipo="cartao">Cartao</div>
+                <div class="pagamento-btn" data-tipo="pix">Pix (-5%)</div>
+            </div>
+            
+            <div class="total-final-box" style="background:linear-gradient(135deg,var(--primary),var(--pink));border-radius:12px;padding:16px;text-align:center;margin-top:12px">
+                <p style="font-size:.8rem;opacity:.8">Total com descontos</p>
+                <h3 style="font-size:1.8rem">R$<span id="totalFinal">0</span></h3>
+                <p id="descontoInfo" style="font-size:.8rem;opacity:.8"></p>
+            </div>
+            
             <button class="btn btn-lime btn-save" id="btnSalvar">
                 <i class="fas fa-save"></i> Salvar Proposta
             </button>
+        </div>
+    </div>
+    
+    <!-- Modal Cupons -->
+    <div class="modal-bg" id="modalCupons">
+        <div class="modal-box">
+            <div class="modal-top">
+                <h3><i class="fas fa-ticket-alt"></i> Gerenciar Cupons</h3>
+                <button class="close-btn" id="fecharModalCupons"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="section-title"><i class="fas fa-plus"></i> Novo Cupom</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Codigo</label>
+                    <input type="text" id="inputNovoCupom" placeholder="Ex: PROMO20" style="text-transform:uppercase">
+                </div>
+                <div class="form-group">
+                    <label>Desconto (%)</label>
+                    <input type="number" id="inputDescontoCupom" placeholder="Ex: 10" min="1" max="50">
+                </div>
+            </div>
+            <button class="btn btn-lime" id="btnCriarCupom" style="width:100%;margin-bottom:20px"><i class="fas fa-plus"></i> Criar Cupom</button>
+            
+            <div class="section-title"><i class="fas fa-list"></i> Cupons Ativos</div>
+            <div id="listaCupons"></div>
         </div>
     </div>
     
@@ -489,7 +569,10 @@
     <script>
         // ===== DADOS =====
         let propostas = [];
+        let cupons = [];
         let bannerQtd = 0;
+        let cupomAtual = null;
+        let pagamentoTipo = 'cartao';
         const precoBanner = { 0: 0, 1: 120, 3: 300, 5: 450 };
         
         // ===== INICIALIZAÇÃO =====
@@ -502,8 +585,10 @@
         function carregarDados() {
             try {
                 propostas = JSON.parse(localStorage.getItem('vizzu_propostas') || '[]');
+                cupons = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]');
             } catch(e) {
                 propostas = [];
+                cupons = [];
             }
             atualizarTudo();
         }
@@ -520,6 +605,14 @@
                 console.log('Abrindo modal nova proposta');
                 abrirModalNova();
             });
+            
+            // Botao Cupons
+            document.getElementById('btnCupons').addEventListener('click', abrirModalCupons);
+            document.getElementById('fecharModalCupons').addEventListener('click', fecharModalCupons);
+            document.getElementById('modalCupons').addEventListener('click', function(e) {
+                if (e.target === this) fecharModalCupons();
+            });
+            document.getElementById('btnCriarCupom').addEventListener('click', criarCupom);
             
             // Fechar Modal Nova
             document.getElementById('fecharModalNova').addEventListener('click', fecharModalNova);
@@ -558,6 +651,83 @@
             document.getElementById('inputBusca').addEventListener('input', function() {
                 renderizarLista(this.value);
             });
+            
+            // Aplicar Cupom
+            document.getElementById('btnAplicarCupom').addEventListener('click', aplicarCupomProposta);
+            
+            // Pagamento tipo
+            document.querySelectorAll('.pagamento-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.pagamento-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    pagamentoTipo = this.dataset.tipo;
+                    calcularTotal();
+                });
+            });
+        }
+        
+        // ===== CUPONS =====
+        function abrirModalCupons() {
+            renderizarCupons();
+            document.getElementById('modalCupons').classList.add('show');
+        }
+        
+        function fecharModalCupons() {
+            document.getElementById('modalCupons').classList.remove('show');
+        }
+        
+        function criarCupom() {
+            const codigo = document.getElementById('inputNovoCupom').value.trim().toUpperCase();
+            const desconto = parseInt(document.getElementById('inputDescontoCupom').value);
+            
+            if (!codigo) { alert('Digite o codigo do cupom!'); return; }
+            if (!desconto || desconto < 1 || desconto > 50) { alert('Desconto deve ser entre 1% e 50%!'); return; }
+            if (cupons.find(c => c.codigo === codigo)) { alert('Cupom ja existe!'); return; }
+            
+            cupons.push({ codigo, desconto });
+            localStorage.setItem('vizzu_cupons', JSON.stringify(cupons));
+            
+            document.getElementById('inputNovoCupom').value = '';
+            document.getElementById('inputDescontoCupom').value = '';
+            renderizarCupons();
+        }
+        
+        function renderizarCupons() {
+            const container = document.getElementById('listaCupons');
+            if (cupons.length === 0) {
+                container.innerHTML = '<p style="color:var(--gray);font-size:.85rem">Nenhum cupom cadastrado</p>';
+                return;
+            }
+            
+            let html = '';
+            cupons.forEach((c, idx) => {
+                html += '<div class="cupom-item">';
+                html += '<div><span class="cupom-code">' + c.codigo + '</span><br><span class="cupom-desc">' + c.desconto + '% de desconto</span></div>';
+                html += '<button class="btn-del" onclick="excluirCupom(' + idx + ')"><i class="fas fa-trash"></i></button>';
+                html += '</div>';
+            });
+            container.innerHTML = html;
+        }
+        
+        window.excluirCupom = function(idx) {
+            if (confirm('Excluir este cupom?')) {
+                cupons.splice(idx, 1);
+                localStorage.setItem('vizzu_cupons', JSON.stringify(cupons));
+                renderizarCupons();
+            }
+        };
+        
+        function aplicarCupomProposta() {
+            const codigo = document.getElementById('inputCupomProposta').value.trim().toUpperCase();
+            const cupom = cupons.find(c => c.codigo === codigo);
+            
+            if (!codigo) { alert('Digite um codigo de cupom!'); return; }
+            if (!cupom) { alert('Cupom invalido!'); return; }
+            
+            cupomAtual = cupom;
+            document.getElementById('cupomAplicado').innerHTML = '<i class="fas fa-check-circle"></i> Cupom ' + cupom.codigo + ' aplicado: ' + cupom.desconto + '% de desconto';
+            document.getElementById('cupomAplicado').style.display = 'block';
+            calcularTotal();
         }
         
         // ===== STATS =====
@@ -717,6 +887,12 @@
             document.getElementById('inputCliente').value = '';
             document.getElementById('inputTelefone').value = '';
             document.getElementById('inputSite').value = '';
+            document.getElementById('inputCupomProposta').value = '';
+            document.getElementById('cupomAplicado').style.display = 'none';
+            cupomAtual = null;
+            pagamentoTipo = 'cartao';
+            document.querySelectorAll('.pagamento-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector('.pagamento-btn[data-tipo="cartao"]').classList.add('selected');
             bannerQtd = 0;
             document.querySelectorAll('.banner-opt').forEach(b => b.classList.remove('selected'));
             document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
@@ -733,21 +909,42 @@
         }
         
         function calcularTotal() {
-            let total = precoBanner[bannerQtd] || 0;
+            let subtotal = precoBanner[bannerQtd] || 0;
             
             document.querySelectorAll('.option-item.selected').forEach(function(el) {
-                total += parseInt(el.dataset.valor) || 0;
+                subtotal += parseInt(el.dataset.valor) || 0;
             });
             
-            document.getElementById('totalValor').textContent = total.toLocaleString('pt-BR');
+            document.getElementById('totalValor').textContent = subtotal.toLocaleString('pt-BR');
             
             let texto = 'Selecione os itens';
-            if (total > 0) {
-                if (total <= 1500) texto = 'À vista';
-                else if (total <= 2500) texto = 'ou 2x de R$' + Math.ceil(total/2).toLocaleString('pt-BR');
-                else texto = 'ou 3x de R$' + Math.ceil(total/3).toLocaleString('pt-BR');
+            if (subtotal > 0) {
+                if (subtotal <= 1500) texto = 'A vista';
+                else if (subtotal <= 2500) texto = 'ou 2x de R$' + Math.ceil(subtotal/2).toLocaleString('pt-BR');
+                else texto = 'ou 3x de R$' + Math.ceil(subtotal/3).toLocaleString('pt-BR');
             }
             document.getElementById('parcelasInfo').textContent = texto;
+            
+            // Calcular total final com descontos
+            let totalFinal = subtotal;
+            let descontoInfo = [];
+            
+            // Desconto cupom
+            if (cupomAtual) {
+                const descontoCupom = subtotal * (cupomAtual.desconto / 100);
+                totalFinal -= descontoCupom;
+                descontoInfo.push('Cupom ' + cupomAtual.codigo + ': -R$' + descontoCupom.toLocaleString('pt-BR'));
+            }
+            
+            // Desconto Pix 5%
+            if (pagamentoTipo === 'pix') {
+                const descontoPix = totalFinal * 0.05;
+                totalFinal -= descontoPix;
+                descontoInfo.push('Pix: -5%');
+            }
+            
+            document.getElementById('totalFinal').textContent = totalFinal.toLocaleString('pt-BR');
+            document.getElementById('descontoInfo').textContent = descontoInfo.length > 0 ? descontoInfo.join(' | ') : '';
         }
         
         function salvarProposta() {
@@ -769,12 +966,27 @@
                 });
             });
             
-            let total = precoBanner[bannerQtd] || 0;
-            total += itens.reduce((acc, i) => acc + i.valor, 0);
+            let subtotal = precoBanner[bannerQtd] || 0;
+            subtotal += itens.reduce((acc, i) => acc + i.valor, 0);
             
-            if (total === 0) {
+            if (subtotal === 0) {
                 alert('Selecione pelo menos um item!');
                 return;
+            }
+            
+            // Calcular descontos
+            let total = subtotal;
+            let descontoCupom = 0;
+            let descontoPix = 0;
+            
+            if (cupomAtual) {
+                descontoCupom = subtotal * (cupomAtual.desconto / 100);
+                total -= descontoCupom;
+            }
+            
+            if (pagamentoTipo === 'pix') {
+                descontoPix = total * 0.05;
+                total -= descontoPix;
             }
             
             // Bonus
@@ -785,10 +997,10 @@
             
             // Prazo
             let prazo = 7;
-            if (total > 2000) prazo = 10;
-            if (total > 3500) prazo = 15;
+            if (subtotal > 2000) prazo = 10;
+            if (subtotal > 3500) prazo = 15;
             
-            // Parcelas
+            // Parcelas (baseado no total com desconto)
             let parcelas = 1;
             if (total > 2500) parcelas = 3;
             else if (total > 1500) parcelas = 2;
@@ -803,8 +1015,12 @@
                 itens: itens,
                 banners: bannerQtd,
                 bonus: bonus,
-                total: total,
-                pix: false,
+                subtotal: subtotal,
+                total: Math.round(total),
+                cupom: cupomAtual ? cupomAtual.codigo : null,
+                descontoCupom: Math.round(descontoCupom),
+                pix: pagamentoTipo === 'pix',
+                descontoPix: Math.round(descontoPix),
                 parcelas: parcelas,
                 prazo: prazo,
                 status: 'Pendente'
@@ -812,6 +1028,14 @@
             
             propostas.unshift(proposta);
             localStorage.setItem('vizzu_propostas', JSON.stringify(propostas));
+            
+            // Reset cupom e pagamento
+            cupomAtual = null;
+            pagamentoTipo = 'cartao';
+            document.getElementById('cupomAplicado').style.display = 'none';
+            document.getElementById('inputCupomProposta').value = '';
+            document.querySelectorAll('.pagamento-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector('.pagamento-btn[data-tipo="cartao"]').classList.add('selected');
             
             fecharModalNova();
             atualizarTudo();

@@ -385,6 +385,15 @@ img{max-width:100%;height:auto;display:block}
 <div class="proposta-lista" id="listaItens"></div>
 <div id="bonusBox" class="bonus-box" style="display:none"></div>
 
+<div class="cupom-box" style="background:rgba(255,255,255,.03);border-radius:10px;padding:14px;margin-bottom:16px">
+<h4 style="font-size:.85rem;color:var(--gray);margin-bottom:10px"><i class="fas fa-ticket-alt"></i> Cupom de Desconto</h4>
+<div style="display:flex;gap:8px">
+<input type="text" id="inputCupom" placeholder="Digite o cupom" style="flex:1;padding:10px 14px;background:var(--dark3);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--white);font-size:.9rem;text-transform:uppercase">
+<button onclick="aplicarCupom()" style="padding:10px 16px;background:var(--primary);color:var(--white);border:none;border-radius:8px;font-weight:600;cursor:pointer">Aplicar</button>
+</div>
+<div id="cupomMsg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:.85rem"></div>
+</div>
+
 <div class="pagamento-box">
 <h4>Forma de Pagamento</h4>
 <div class="pagamento-opcoes" id="pagamentoOpcoes"></div>
@@ -416,6 +425,11 @@ reveals.forEach(el => obs.observe(el));
 let selecionados = [];
 let bannerQtd = 0;
 let pixAtivo = false;
+let cupomAtivo = null;
+
+// Cupons do localStorage
+let cupons = [];
+try { cupons = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]'); } catch(e) { cupons = []; }
 
 // Preços banners
 const precoBanner = { 0: 0, 1: 120, 3: 300, 5: 450 };
@@ -427,6 +441,38 @@ const planosSugestao = {
     premium: ['Redesign Completo', 'Carrossel Institucional', 'Carrossel de Produtos', 'Carrossel de Produtos', 'Botão WhatsApp / Grupo', 'Barra de Vantagens', 'Cupom Copiável', 'Oferta Relâmpago', 'Brinde Automático', 'Feedbacks Personalizados', 'Rodapé Informativo', 'Links Rápidos', 'Estrutura Institucional']
 };
 const planoBanners = { start: 1, pro: 3, premium: 5 };
+
+// Funcao aplicar cupom
+function aplicarCupom() {
+    const codigo = document.getElementById('inputCupom').value.trim().toUpperCase();
+    const cupomMsg = document.getElementById('cupomMsg');
+    
+    if (!codigo) {
+        cupomMsg.innerHTML = 'Digite um codigo de cupom!';
+        cupomMsg.style.display = 'block';
+        cupomMsg.style.background = 'rgba(239,68,68,.1)';
+        cupomMsg.style.color = '#ef4444';
+        return;
+    }
+    
+    const cupom = cupons.find(c => c.codigo === codigo);
+    if (!cupom) {
+        cupomMsg.innerHTML = '<i class="fas fa-times-circle"></i> Cupom invalido!';
+        cupomMsg.style.display = 'block';
+        cupomMsg.style.background = 'rgba(239,68,68,.1)';
+        cupomMsg.style.color = '#ef4444';
+        cupomAtivo = null;
+        atualizarTotalModal(calcularTotal(), calcularParcelas(calcularTotal()));
+        return;
+    }
+    
+    cupomAtivo = cupom;
+    cupomMsg.innerHTML = '<i class="fas fa-check-circle"></i> Cupom ' + cupom.codigo + ' aplicado: ' + cupom.desconto + '% de desconto!';
+    cupomMsg.style.display = 'block';
+    cupomMsg.style.background = 'rgba(34,197,94,.1)';
+    cupomMsg.style.color = '#22c55e';
+    atualizarTotalModal(calcularTotal(), calcularParcelas(calcularTotal()));
+}
 
 // Event listeners
 document.querySelectorAll('.servico').forEach(el => {
@@ -595,19 +641,35 @@ function abrirModal() {
 }
 
 function atualizarTotalModal(total, parcelas) {
-    const desconto = pixAtivo ? total * 0.05 : 0;
-    const totalFinal = total - desconto;
+    let totalComDesconto = total;
+    let descontoTexto = [];
+    
+    // Desconto cupom
+    if (cupomAtivo) {
+        const descontoCupom = total * (cupomAtivo.desconto / 100);
+        totalComDesconto -= descontoCupom;
+        descontoTexto.push('Cupom ' + cupomAtivo.codigo + ': -' + cupomAtivo.desconto + '%');
+    }
+    
+    // Desconto Pix 5%
+    if (pixAtivo) {
+        const descontoPix = totalComDesconto * 0.05;
+        totalComDesconto -= descontoPix;
+        descontoTexto.push('Pix: -5%');
+    }
+    
+    const totalFinal = totalComDesconto;
     
     const subtotalBox = document.getElementById('subtotalBox');
-    if (pixAtivo) {
-        document.getElementById('subtotalValor').textContent = `R$${total.toLocaleString('pt-BR')}`;
+    if (cupomAtivo || pixAtivo) {
+        document.getElementById('subtotalValor').textContent = 'R$' + total.toLocaleString('pt-BR');
         subtotalBox.style.display = 'block';
     } else {
         subtotalBox.style.display = 'none';
     }
     
-    document.getElementById('valorFinal').textContent = totalFinal.toLocaleString('pt-BR');
-    document.getElementById('parcelasTexto').textContent = pixAtivo ? '5% de desconto no Pix' : parcelas.texto;
+    document.getElementById('valorFinal').textContent = Math.round(totalFinal).toLocaleString('pt-BR');
+    document.getElementById('parcelasTexto').textContent = descontoTexto.length > 0 ? descontoTexto.join(' | ') : parcelas.texto;
 }
 
 function togglePix() {
@@ -625,15 +687,29 @@ function fecharModal(event) {
 }
 
 function enviarWhatsApp() {
-    const nomeLoja = document.getElementById('nomeLoja').value || 'Não informado';
+    const nomeLoja = document.getElementById('nomeLoja').value || 'Nao informado';
     const nomeCliente = document.getElementById('nomeCliente').value || 'Cliente';
     const telefone = document.getElementById('telefone').value || '';
     const siteLoja = document.getElementById('siteLoja').value || '';
     const total = calcularTotal();
     const bonus = calcularBonus();
-    const desconto = pixAtivo ? total * 0.05 : 0;
-    const totalFinal = total - desconto;
-    const parcelas = calcularParcelas(total);
+    
+    // Calcular descontos
+    let totalComDesconto = total;
+    let descontoCupom = 0;
+    let descontoPix = 0;
+    
+    if (cupomAtivo) {
+        descontoCupom = total * (cupomAtivo.desconto / 100);
+        totalComDesconto -= descontoCupom;
+    }
+    if (pixAtivo) {
+        descontoPix = totalComDesconto * 0.05;
+        totalComDesconto -= descontoPix;
+    }
+    
+    const totalFinal = Math.round(totalComDesconto);
+    const parcelas = calcularParcelas(totalFinal);
     const parcelaAtiva = document.querySelector('.pagamento-opt.active')?.dataset.parcela || '1';
     
     // Calcular prazo
@@ -641,32 +717,37 @@ function enviarWhatsApp() {
     if (total > 2000) prazo = 10;
     if (total > 3500) prazo = 15;
     
-    let msg = `✨ *PROPOSTA VIZZU DIGITAL*\n\n`;
-    msg += `🏪 *Loja:* ${nomeLoja}\n`;
-    msg += `👤 *Cliente:* ${nomeCliente}\n`;
-    if (telefone) msg += `📱 *WhatsApp:* ${telefone}\n`;
-    if (siteLoja) msg += `🌐 *Site:* ${siteLoja}\n`;
-    msg += `\n📋 *ITENS SELECIONADOS:*\n`;
+    let msg = '*PROPOSTA VIZZU DIGITAL*\n\n';
+    msg += '*Loja:* ' + nomeLoja + '\n';
+    msg += '*Cliente:* ' + nomeCliente + '\n';
+    if (telefone) msg += '*WhatsApp:* ' + telefone + '\n';
+    if (siteLoja) msg += '*Site:* ' + siteLoja + '\n';
+    msg += '\n*ITENS SELECIONADOS:*\n';
     
     selecionados.forEach(s => {
-        msg += `• ${s.nome} - R$${s.valor.toLocaleString('pt-BR')}\n`;
+        msg += '- ' + s.nome + ' - R$' + s.valor.toLocaleString('pt-BR') + '\n';
     });
     if (bannerQtd > 0) {
-        msg += `• ${bannerQtd} Banner${bannerQtd > 1 ? 's' : ''} - R$${precoBanner[bannerQtd].toLocaleString('pt-BR')}\n`;
+        msg += '- ' + bannerQtd + ' Banner' + (bannerQtd > 1 ? 's' : '') + ' - R$' + precoBanner[bannerQtd].toLocaleString('pt-BR') + '\n';
     }
     
     if (bonus > 0) {
-        msg += `\n🎁 *BÔNUS:* ${bonus} banner${bonus > 1 ? 's' : ''} de cortesia!\n`;
+        msg += '\n*BONUS:* ' + bonus + ' banner' + (bonus > 1 ? 's' : '') + ' de cortesia!\n';
     }
     
-    msg += `\n💰 *TOTAL: R$${totalFinal.toLocaleString('pt-BR')}*`;
-    if (pixAtivo) {
-        msg += ` (Pix -5%)`;
-    } else if (parcelaAtiva > 1) {
-        msg += ` (${parcelaAtiva}x de R$${Math.ceil(totalFinal/parcelaAtiva).toLocaleString('pt-BR')})`;
+    // Mostrar descontos
+    if (cupomAtivo || pixAtivo) {
+        msg += '\n*DESCONTOS:*\n';
+        if (cupomAtivo) msg += '- Cupom ' + cupomAtivo.codigo + ': -R$' + Math.round(descontoCupom).toLocaleString('pt-BR') + '\n';
+        if (pixAtivo) msg += '- Pix: -5%\n';
     }
     
-    msg += `\n📅 *Prazo:* ${prazo} dias úteis`;
+    msg += '\n*TOTAL: R$' + totalFinal.toLocaleString('pt-BR') + '*';
+    if (!pixAtivo && parcelaAtiva > 1) {
+        msg += ' (' + parcelaAtiva + 'x de R$' + Math.ceil(totalFinal/parcelaAtiva).toLocaleString('pt-BR') + ')';
+    }
+    
+    msg += '\n*Prazo:* ' + prazo + ' dias uteis';
     
     // Salvar proposta no localStorage
     const proposta = {
@@ -679,8 +760,12 @@ function enviarWhatsApp() {
         itens: [...selecionados],
         banners: bannerQtd,
         bonus,
+        subtotal: total,
         total: totalFinal,
+        cupom: cupomAtivo ? cupomAtivo.codigo : null,
+        descontoCupom: Math.round(descontoCupom),
         pix: pixAtivo,
+        descontoPix: Math.round(descontoPix),
         parcelas: parcelaAtiva,
         prazo,
         status: 'Pendente'
