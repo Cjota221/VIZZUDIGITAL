@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta | VIZZU Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--dark:#0a0a0f;--dark2:#12121a;--dark3:#1a1a24;--lime:#ccff00;--primary:#7c3aed;--pink:#d500f9;--white:#fff;--gray:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--white);min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:20px}
+
+/* Header */
+.header{text-align:center;padding:40px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.logo{font-size:1.5rem;font-weight:800;margin-bottom:8px}
+.logo span{color:var(--lime)}
+.header-sub{color:var(--gray);font-size:.9rem}
+
+/* Info Card */
+.info-card{background:var(--dark2);border-radius:16px;padding:24px;margin:24px 0;border:1px solid rgba(255,255,255,.1)}
+.info-title{font-size:1.1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.info-title i{color:var(--primary)}
+.info-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:12px}
+.info-item{background:var(--dark3);padding:12px;border-radius:8px}
+.info-label{font-size:.75rem;color:var(--gray);margin-bottom:4px}
+.info-value{font-weight:600}
+
+/* Itens */
+.itens-card{background:var(--dark2);border-radius:16px;padding:24px;margin:24px 0;border:1px solid rgba(255,255,255,.1)}
+.itens-title{font-size:1.1rem;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.itens-title i{color:var(--lime)}
+.item{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--dark3);border-radius:10px;margin-bottom:10px;gap:12px}
+.item:last-child{margin-bottom:0}
+.item-info{flex:1;display:flex;align-items:center;gap:12px}
+.item-icon{width:36px;height:36px;border-radius:8px;background:rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+.item-nome{font-weight:500}
+.item-valor{font-weight:700;color:var(--lime);white-space:nowrap}
+.item-preview{padding:6px 12px;border-radius:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.4);color:var(--primary);font-size:.75rem;cursor:pointer;transition:all .2s}
+.item-preview:hover{background:var(--primary);color:var(--white)}
+
+/* Bonus */
+.bonus-badge{background:linear-gradient(135deg, var(--primary), var(--pink));padding:16px;border-radius:12px;margin:16px 0;display:flex;align-items:center;gap:12px}
+.bonus-icon{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.bonus-text{font-weight:600}
+.bonus-text span{opacity:.8;font-weight:400}
+
+/* Totais */
+.totais-card{background:var(--dark2);border-radius:16px;padding:24px;margin:24px 0;border:1px solid rgba(255,255,255,.1)}
+.total-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.total-row:last-child{border-bottom:none}
+.total-row.destaque{font-size:1.2rem;font-weight:700;border-bottom:none;padding-top:16px;margin-top:8px;border-top:1px solid rgba(255,255,255,.1)}
+.total-row.destaque .valor{color:var(--lime)}
+.total-row.desconto .valor{color:#4ade80}
+
+/* CTA */
+.cta-section{text-align:center;padding:32px;background:var(--dark2);border-radius:16px;margin:24px 0;border:1px solid rgba(255,255,255,.1)}
+.cta-title{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+.cta-sub{color:var(--gray);margin-bottom:24px}
+.btn-whatsapp{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;background:#25D366;color:var(--white);border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s}
+.btn-whatsapp:hover{transform:scale(1.05);box-shadow:0 8px 30px rgba(37,211,102,.3)}
+.btn-whatsapp i{font-size:1.3rem}
+
+/* Footer */
+.footer{text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+.footer a{color:var(--lime);text-decoration:none}
+
+/* Loading */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:20px}
+.loading-spinner{width:48px;height:48px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Error */
+.error-card{text-align:center;padding:60px 24px;background:var(--dark2);border-radius:16px;margin:40px 0}
+.error-icon{font-size:3rem;color:var(--pink);margin-bottom:16px}
+.error-title{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+.error-text{color:var(--gray);margin-bottom:24px}
+.btn-home{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--primary);color:var(--white);border:none;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none}
+
+/* Preview Modal */
+.preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;padding:10px}
+.preview-overlay.active{opacity:1;visibility:visible}
+.preview-modal{width:100%;max-width:95vw;max-height:95vh;background:var(--dark2);border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transform:scale(.95);transition:transform .3s}
+.preview-overlay.active .preview-modal{transform:scale(1)}
+.preview-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--dark3);border-bottom:1px solid rgba(255,255,255,.1)}
+.preview-title{font-weight:600;font-size:.9rem}
+.btn-close{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--gray);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-close:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:#ef4444}
+.preview-frame{flex:1;width:100%;border:none;background:#fff;min-height:70vh}
+
+@media(max-width:600px){
+.info-grid{grid-template-columns:1fr}
+.item{flex-wrap:wrap}
+.item-preview{width:100%;text-align:center;margin-top:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div>Carregando proposta...</div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="preview-overlay" id="previewOverlay" onclick="fecharPreview(event)">
+    <div class="preview-modal" onclick="event.stopPropagation()">
+        <div class="preview-header">
+            <div class="preview-title" id="previewTitle">Preview</div>
+            <button class="btn-close" onclick="fecharPreview()"><i class="fas fa-times"></i></button>
+        </div>
+        <iframe class="preview-frame" id="previewFrame"></iframe>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://kvpetrexgrpizwfomjjt.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cGV0cmV4Z3JwaXp3Zm9tamp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MzkzNjUsImV4cCI6MjA4NDQxNTM2NX0.kP9TQqYIiPchtd7Y89oQdg78nZw4GBiTvLhxhz1vWs8';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let previews = {};
+
+async function carregarPreviews() {
+    try {
+        const { data } = await db.from('previews').select('*');
+        if (data) {
+            data.forEach(p => {
+                previews[p.nome_aplicacao] = p.html_preview;
+            });
+        }
+    } catch(e) {
+        console.log('Erro ao carregar previews:', e);
+    }
+}
+
+async function carregarProposta() {
+    const params = new URLSearchParams(window.location.search);
+    const propostaId = params.get('id');
+    
+    if (!propostaId) {
+        mostrarErro('Link invalido', 'Este link nao contem uma proposta valida.');
+        return;
+    }
+    
+    await carregarPreviews();
+    
+    try {
+        // Tentar carregar do Supabase
+        const { data: proposta, error } = await db
+            .from('propostas')
+            .select('*')
+            .eq('id', propostaId)
+            .single();
+        
+        if (error || !proposta) {
+            mostrarErro('Proposta nao encontrada', 'Esta proposta pode ter sido removida ou o link esta incorreto.');
+            return;
+        }
+        
+        renderizarProposta(proposta);
+        
+    } catch(e) {
+        console.error('Erro:', e);
+        mostrarErro('Erro ao carregar', 'Ocorreu um erro ao carregar a proposta. Tente novamente.');
+    }
+}
+
+function renderizarProposta(p) {
+    const itens = typeof p.itens === 'string' ? JSON.parse(p.itens) : (p.itens || []);
+    
+    let itensHtml = '';
+    itens.forEach(item => {
+        const temPreview = previews[item.nome];
+        itensHtml += `
+            <div class="item">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fas fa-check"></i></div>
+                    <div class="item-nome">${item.nome}</div>
+                </div>
+                ${temPreview ? `<button class="item-preview" onclick="abrirPreview('${item.nome}')">Ver aplicacao</button>` : ''}
+                <div class="item-valor">R$${item.valor.toLocaleString('pt-BR')}</div>
+            </div>
+        `;
+    });
+    
+    // Banners
+    if (p.banners && p.banners > 0) {
+        const precoBanner = {1: 50, 2: 100, 3: 120, 4: 150, 5: 175};
+        const valorBanners = precoBanner[p.banners] || (p.banners * 40);
+        itensHtml += `
+            <div class="item">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fas fa-image"></i></div>
+                    <div class="item-nome">${p.banners} Banner${p.banners > 1 ? 's' : ''}</div>
+                </div>
+                <div class="item-valor">R$${valorBanners.toLocaleString('pt-BR')}</div>
+            </div>
+        `;
+    }
+    
+    // Bonus
+    let bonusHtml = '';
+    if (p.bonus && p.bonus > 0) {
+        bonusHtml = `
+            <div class="bonus-badge">
+                <div class="bonus-icon"><i class="fas fa-gift"></i></div>
+                <div class="bonus-text">${p.bonus} banner${p.bonus > 1 ? 's' : ''} de cortesia! <span>Bonus por volume</span></div>
+            </div>
+        `;
+    }
+    
+    // Totais
+    let totaisHtml = `<div class="total-row"><span>Subtotal</span><span>R$${p.subtotal.toLocaleString('pt-BR')}</span></div>`;
+    
+    if (p.desconto_cupom && p.desconto_cupom > 0) {
+        totaisHtml += `<div class="total-row desconto"><span>Cupom ${p.cupom || ''}</span><span class="valor">-R$${p.desconto_cupom.toLocaleString('pt-BR')}</span></div>`;
+    }
+    if (p.desconto_pix && p.desconto_pix > 0) {
+        totaisHtml += `<div class="total-row desconto"><span>Desconto PIX (5%)</span><span class="valor">-R$${p.desconto_pix.toLocaleString('pt-BR')}</span></div>`;
+    }
+    
+    totaisHtml += `<div class="total-row destaque"><span>Total</span><span class="valor">R$${p.total.toLocaleString('pt-BR')}</span></div>`;
+    
+    // Parcelas
+    if (p.parcelas && p.parcelas > 1) {
+        const valorParcela = Math.ceil(p.total / p.parcelas);
+        totaisHtml += `<div class="total-row"><span>Parcelamento</span><span>${p.parcelas}x de R$${valorParcela.toLocaleString('pt-BR')}</span></div>`;
+    }
+    
+    const html = `
+        <header class="header">
+            <div class="logo">VIZZU<span>.</span></div>
+            <div class="header-sub">Proposta de Personalizacao FacilZap</div>
+        </header>
+        
+        <div class="info-card">
+            <div class="info-title"><i class="fas fa-store"></i> Informacoes</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Loja</div>
+                    <div class="info-value">${p.loja || 'Nao informado'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Cliente</div>
+                    <div class="info-value">${p.cliente || 'Nao informado'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Data</div>
+                    <div class="info-value">${p.data || new Date().toLocaleDateString('pt-BR')}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Prazo de Entrega</div>
+                    <div class="info-value">${p.prazo || 7} dias uteis</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="itens-card">
+            <div class="itens-title"><i class="fas fa-list-check"></i> Itens da Proposta</div>
+            ${itensHtml}
+            ${bonusHtml}
+        </div>
+        
+        <div class="totais-card">
+            ${totaisHtml}
+        </div>
+        
+        <div class="cta-section">
+            <div class="cta-title">Gostou da proposta?</div>
+            <div class="cta-sub">Fale conosco para finalizar o pedido</div>
+            <button class="btn-whatsapp" onclick="abrirWhatsApp()">
+                <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+            </button>
+        </div>
+        
+        <footer class="footer">
+            Proposta valida por 7 dias | <a href="https://vizzu.com.br" target="_blank">vizzu.com.br</a>
+        </footer>
+    `;
+    
+    document.getElementById('container').innerHTML = html;
+}
+
+function mostrarErro(titulo, texto) {
+    document.getElementById('container').innerHTML = `
+        <header class="header">
+            <div class="logo">VIZZU<span>.</span></div>
+            <div class="header-sub">Personalizacao FacilZap</div>
+        </header>
+        <div class="error-card">
+            <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="error-title">${titulo}</div>
+            <div class="error-text">${texto}</div>
+            <a href="orcamento.html" class="btn-home"><i class="fas fa-calculator"></i> Criar Nova Proposta</a>
+        </div>
+    `;
+}
+
+function abrirPreview(nomeApp) {
+    const html = previews[nomeApp];
+    if (!html) return;
+    
+    document.getElementById('previewTitle').textContent = nomeApp;
+    const frame = document.getElementById('previewFrame');
+    frame.srcdoc = html;
+    document.getElementById('previewOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function fecharPreview(e) {
+    if (e && e.target !== document.getElementById('previewOverlay')) return;
+    document.getElementById('previewOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    document.getElementById('previewFrame').srcdoc = '';
+}
+
+function abrirWhatsApp() {
+    const msg = 'Ola! Vi a proposta de personalizacao e gostaria de mais informacoes.';
+    window.open(`https://wa.me/5562982237075?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// Fechar preview com ESC
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fecharPreview();
+});
+
+// Iniciar
+carregarProposta();
+</script>
+</body>
+</html>
