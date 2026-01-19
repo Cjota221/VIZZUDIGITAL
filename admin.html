@@ -187,6 +187,7 @@
             font-size: 0.85rem;
         }
         .action-btn.ver { background: rgba(124,58,237,0.15); color: var(--primary); }
+        .action-btn.edit { background: rgba(245,158,11,0.15); color: var(--yellow); }
         .action-btn.wpp { background: rgba(37,211,102,0.15); color: #25d366; }
         .action-btn.del { background: rgba(239,68,68,0.1); color: var(--red); }
         
@@ -576,6 +577,69 @@
             <div id="detalhesContent"></div>
         </div>
     </div>
+    
+    <!-- Modal Editar Proposta -->
+    <div class="modal-bg" id="modalEditar">
+        <div class="modal-box" style="max-width:600px;max-height:95vh">
+            <div class="modal-top">
+                <h3><i class="fas fa-edit"></i> Editar Proposta</h3>
+                <button class="close-btn" id="fecharModalEditar"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome da Loja</label>
+                    <input type="text" id="editLoja">
+                </div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="editCliente">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>WhatsApp</label>
+                    <input type="text" id="editTelefone">
+                </div>
+                <div class="form-group">
+                    <label>Site</label>
+                    <input type="text" id="editSite">
+                </div>
+            </div>
+            
+            <div class="section-title"><i class="fas fa-list"></i> Itens da Proposta</div>
+            <div id="editItensLista" style="margin-bottom:16px"></div>
+            
+            <div class="section-title"><i class="fas fa-ticket-alt"></i> Cupom</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cupom Aplicado</label>
+                    <input type="text" id="editCupom" placeholder="Codigo do cupom" style="text-transform:uppercase">
+                </div>
+                <div class="form-group" style="justify-content:flex-end">
+                    <button class="btn btn-outline" id="btnAplicarCupomEdit" style="margin-top:auto">Aplicar</button>
+                    <button class="btn btn-outline" id="btnRemoverCupomEdit" style="margin-top:auto;margin-left:8px;color:var(--red);border-color:var(--red)">Remover</button>
+                </div>
+            </div>
+            <div id="editCupomInfo" style="display:none;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.85rem;color:#22c55e"></div>
+            
+            <div class="section-title"><i class="fas fa-credit-card"></i> Forma de Pagamento</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                <div class="pagamento-btn edit-pag" data-tipo="cartao">Cartao</div>
+                <div class="pagamento-btn edit-pag" data-tipo="pix">Pix (-5%)</div>
+            </div>
+            
+            <div style="background:linear-gradient(135deg,var(--primary),var(--pink));border-radius:12px;padding:16px;text-align:center;margin:16px 0">
+                <p style="font-size:.8rem;opacity:.8">Total com descontos</p>
+                <h3 style="font-size:1.8rem">R$<span id="editTotalFinal">0</span></h3>
+                <p id="editDescontoInfo" style="font-size:.8rem;opacity:.8"></p>
+            </div>
+            
+            <button class="btn btn-lime btn-save" id="btnSalvarEdicao">
+                <i class="fas fa-save"></i> Salvar Alteracoes
+            </button>
+        </div>
+    </div>
 
     <script>
         // ===== DADOS =====
@@ -584,6 +648,11 @@
         let bannerQtd = 0;
         let cupomAtual = null;
         let pagamentoTipo = 'cartao';
+        let editandoId = null;
+        let editCupom = null;
+        let editPagamento = 'cartao';
+        let editItens = [];
+        let editBanners = 0;
         const precoBanner = { 0: 0, 1: 120, 3: 300, 5: 450 };
         
         // ===== INICIALIZAÇÃO =====
@@ -635,6 +704,25 @@
             document.getElementById('fecharModalDetalhes').addEventListener('click', fecharModalDetalhes);
             document.getElementById('modalDetalhes').addEventListener('click', function(e) {
                 if (e.target === this) fecharModalDetalhes();
+            });
+            
+            // Modal Editar
+            document.getElementById('fecharModalEditar').addEventListener('click', fecharModalEditar);
+            document.getElementById('modalEditar').addEventListener('click', function(e) {
+                if (e.target === this) fecharModalEditar();
+            });
+            document.getElementById('btnAplicarCupomEdit').addEventListener('click', aplicarCupomEdit);
+            document.getElementById('btnRemoverCupomEdit').addEventListener('click', removerCupomEdit);
+            document.getElementById('btnSalvarEdicao').addEventListener('click', salvarEdicao);
+            
+            // Pagamento edit
+            document.querySelectorAll('.edit-pag').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.edit-pag').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    editPagamento = this.dataset.tipo;
+                    calcularTotalEdit();
+                });
             });
             
             // Banners
@@ -789,6 +877,7 @@
                 html += '</select></td>';
                 html += '<td><div class="actions">';
                 html += '<button class="action-btn ver" onclick="verDetalhes(' + p.id + ')" title="Ver"><i class="fas fa-eye"></i></button>';
+                html += '<button class="action-btn edit" onclick="editarProposta(' + p.id + ')" title="Editar"><i class="fas fa-edit"></i></button>';
                 html += '<button class="action-btn wpp" onclick="enviarWpp(' + p.id + ')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>';
                 html += '<button class="action-btn del" onclick="excluir(' + p.id + ')" title="Excluir"><i class="fas fa-trash"></i></button>';
                 html += '</div></td>';
@@ -1054,6 +1143,177 @@
             if (confirm('Proposta salva!\n\nEnviar pelo WhatsApp agora?')) {
                 enviarWpp(proposta.id);
             }
+        }
+        
+        // ===== EDITAR PROPOSTA =====
+        window.editarProposta = function(id) {
+            const p = propostas.find(prop => prop.id === id);
+            if (!p) return;
+            
+            editandoId = id;
+            editItens = p.itens ? [...p.itens] : [];
+            editBanners = p.banners || 0;
+            editPagamento = p.pix ? 'pix' : 'cartao';
+            editCupom = p.cupom ? cupons.find(c => c.codigo === p.cupom) : null;
+            
+            // Preencher campos
+            document.getElementById('editLoja').value = p.loja || '';
+            document.getElementById('editCliente').value = p.cliente || '';
+            document.getElementById('editTelefone').value = p.telefone || '';
+            document.getElementById('editSite').value = p.site || '';
+            document.getElementById('editCupom').value = p.cupom || '';
+            
+            // Cupom info
+            if (editCupom) {
+                document.getElementById('editCupomInfo').innerHTML = '<i class="fas fa-check-circle"></i> Cupom ' + editCupom.codigo + ': ' + editCupom.desconto + '% de desconto';
+                document.getElementById('editCupomInfo').style.display = 'block';
+            } else {
+                document.getElementById('editCupomInfo').style.display = 'none';
+            }
+            
+            // Pagamento
+            document.querySelectorAll('.edit-pag').forEach(b => b.classList.remove('selected'));
+            document.querySelector('.edit-pag[data-tipo="' + editPagamento + '"]').classList.add('selected');
+            
+            renderizarItensEdit();
+            calcularTotalEdit();
+            
+            document.getElementById('modalEditar').classList.add('show');
+        };
+        
+        function fecharModalEditar() {
+            document.getElementById('modalEditar').classList.remove('show');
+            editandoId = null;
+        }
+        
+        function renderizarItensEdit() {
+            let html = '';
+            
+            editItens.forEach((item, idx) => {
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-bottom:8px">';
+                html += '<span>' + item.nome + '</span>';
+                html += '<div style="display:flex;align-items:center;gap:12px">';
+                html += '<span style="color:var(--lime);font-weight:600">R$' + (item.valor || 0).toLocaleString('pt-BR') + '</span>';
+                html += '<button onclick="removerItemEdit(' + idx + ')" style="background:rgba(239,68,68,.1);color:var(--red);border:none;padding:6px 10px;border-radius:6px;cursor:pointer"><i class="fas fa-times"></i></button>';
+                html += '</div></div>';
+            });
+            
+            if (editBanners > 0) {
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-bottom:8px">';
+                html += '<span>' + editBanners + ' Banner(s)</span>';
+                html += '<div style="display:flex;align-items:center;gap:12px">';
+                html += '<span style="color:var(--lime);font-weight:600">R$' + (precoBanner[editBanners] || 0).toLocaleString('pt-BR') + '</span>';
+                html += '<button onclick="removerBannersEdit()" style="background:rgba(239,68,68,.1);color:var(--red);border:none;padding:6px 10px;border-radius:6px;cursor:pointer"><i class="fas fa-times"></i></button>';
+                html += '</div></div>';
+            }
+            
+            if (editItens.length === 0 && editBanners === 0) {
+                html = '<p style="color:var(--gray);font-size:.85rem;text-align:center;padding:20px">Nenhum item na proposta</p>';
+            }
+            
+            document.getElementById('editItensLista').innerHTML = html;
+        }
+        
+        window.removerItemEdit = function(idx) {
+            editItens.splice(idx, 1);
+            renderizarItensEdit();
+            calcularTotalEdit();
+        };
+        
+        window.removerBannersEdit = function() {
+            editBanners = 0;
+            renderizarItensEdit();
+            calcularTotalEdit();
+        };
+        
+        function aplicarCupomEdit() {
+            const codigo = document.getElementById('editCupom').value.trim().toUpperCase();
+            const cupom = cupons.find(c => c.codigo === codigo);
+            
+            if (!codigo) { alert('Digite um codigo de cupom!'); return; }
+            if (!cupom) { alert('Cupom invalido!'); return; }
+            
+            editCupom = cupom;
+            document.getElementById('editCupomInfo').innerHTML = '<i class="fas fa-check-circle"></i> Cupom ' + cupom.codigo + ' aplicado: ' + cupom.desconto + '% de desconto';
+            document.getElementById('editCupomInfo').style.display = 'block';
+            calcularTotalEdit();
+        }
+        
+        function removerCupomEdit() {
+            editCupom = null;
+            document.getElementById('editCupom').value = '';
+            document.getElementById('editCupomInfo').style.display = 'none';
+            calcularTotalEdit();
+        }
+        
+        function calcularTotalEdit() {
+            let subtotal = editItens.reduce((acc, i) => acc + (i.valor || 0), 0);
+            subtotal += precoBanner[editBanners] || 0;
+            
+            let total = subtotal;
+            let descontoInfo = [];
+            
+            if (editCupom) {
+                const desc = subtotal * (editCupom.desconto / 100);
+                total -= desc;
+                descontoInfo.push('Cupom ' + editCupom.codigo + ': -R$' + Math.round(desc).toLocaleString('pt-BR'));
+            }
+            
+            if (editPagamento === 'pix') {
+                const descPix = total * 0.05;
+                total -= descPix;
+                descontoInfo.push('Pix: -5%');
+            }
+            
+            document.getElementById('editTotalFinal').textContent = Math.round(total).toLocaleString('pt-BR');
+            document.getElementById('editDescontoInfo').textContent = descontoInfo.length > 0 ? descontoInfo.join(' | ') : '';
+        }
+        
+        function salvarEdicao() {
+            const idx = propostas.findIndex(p => p.id === editandoId);
+            if (idx === -1) { alert('Proposta nao encontrada!'); return; }
+            
+            let subtotal = editItens.reduce((acc, i) => acc + (i.valor || 0), 0);
+            subtotal += precoBanner[editBanners] || 0;
+            
+            let total = subtotal;
+            let descontoCupom = 0;
+            let descontoPix = 0;
+            
+            if (editCupom) {
+                descontoCupom = subtotal * (editCupom.desconto / 100);
+                total -= descontoCupom;
+            }
+            
+            if (editPagamento === 'pix') {
+                descontoPix = total * 0.05;
+                total -= descontoPix;
+            }
+            
+            // Atualizar proposta
+            propostas[idx].loja = document.getElementById('editLoja').value.trim();
+            propostas[idx].cliente = document.getElementById('editCliente').value.trim();
+            propostas[idx].telefone = document.getElementById('editTelefone').value.trim();
+            propostas[idx].site = document.getElementById('editSite').value.trim();
+            propostas[idx].itens = editItens;
+            propostas[idx].banners = editBanners;
+            propostas[idx].subtotal = subtotal;
+            propostas[idx].total = Math.round(total);
+            propostas[idx].cupom = editCupom ? editCupom.codigo : null;
+            propostas[idx].descontoCupom = Math.round(descontoCupom);
+            propostas[idx].pix = editPagamento === 'pix';
+            propostas[idx].descontoPix = Math.round(descontoPix);
+            
+            // Recalcular parcelas
+            if (total > 2500) propostas[idx].parcelas = 3;
+            else if (total > 1500) propostas[idx].parcelas = 2;
+            else propostas[idx].parcelas = 1;
+            
+            localStorage.setItem('vizzu_propostas', JSON.stringify(propostas));
+            
+            fecharModalEditar();
+            atualizarTudo();
+            alert('Proposta atualizada com sucesso!');
         }
     </script>
 </body>
