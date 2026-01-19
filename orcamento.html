@@ -107,6 +107,26 @@ img{max-width:100%;height:auto;display:block}
 .servico-info{flex:1;min-width:0}
 .servico-nome{font-weight:600;font-size:.9rem}
 .servico-valor{font-weight:700;font-size:.95rem;color:var(--lime);white-space:nowrap}
+.servico-actions{display:flex;align-items:center;gap:8px}
+.btn-preview{width:32px;height:32px;border-radius:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:var(--primary);font-size:.75rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.btn-preview.disponivel{display:flex}
+.btn-preview:hover{background:var(--primary);color:var(--white);transform:scale(1.05)}
+
+/* MODAL PREVIEW */
+.preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;padding:10px}
+.preview-overlay.active{opacity:1;visibility:visible}
+.preview-modal{width:100%;max-width:95vw;max-height:95vh;background:var(--dark2);border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transform:scale(.95);transition:transform .3s}
+.preview-overlay.active .preview-modal{transform:scale(1)}
+.preview-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--dark3);border-bottom:1px solid rgba(255,255,255,.1)}
+.preview-title{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.preview-title i{color:var(--primary)}
+.preview-close{width:32px;height:32px;background:rgba(255,255,255,.1);border:none;border-radius:50%;color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s}
+.preview-close:hover{background:rgba(255,0,0,.3)}
+.preview-toolbar{display:flex;gap:8px;padding:10px 16px;background:var(--dark3);border-bottom:1px solid rgba(255,255,255,.06)}
+.preview-size{padding:8px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--white);font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:6px}
+.preview-size.active{background:var(--primary);border-color:var(--primary)}
+.preview-container{flex:1;display:flex;justify-content:center;align-items:flex-start;background:#1a1a24;padding:16px;overflow:auto;min-height:400px}
+.preview-container iframe{border:none;background:#fff;border-radius:8px;box-shadow:0 0 30px rgba(0,0,0,.5);transition:width .3s}
 
 /* BANNER SELECTOR */
 .banner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -301,16 +321,16 @@ img{max-width:100%;height:auto;display:block}
 </div>
 </div>
 
-<div class="servico" data-valor="150" data-nome="Botão WhatsApp / Grupo" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Botão WhatsApp / Grupo</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Barra de Vantagens" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Barra de Vantagens</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Cupom Copiável" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Cupom Copiável</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Oferta Relâmpago" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Oferta Relâmpago</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Brinde Automático" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Brinde Automático</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Feedbacks Personalizados" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Feedbacks Personalizados</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Rodapé Informativo" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Rodapé Informativo</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Links Rápidos" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Links Rápidos</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Destaques da Loja" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Destaques da Loja</div></div><div class="servico-valor">R$150</div></div>
-<div class="servico" data-valor="150" data-nome="Promoções" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Promoções</div></div><div class="servico-valor">R$150</div></div>
+<div class="servico" data-valor="150" data-nome="Botão WhatsApp / Grupo" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Botão WhatsApp / Grupo</div></div><div class="servico-actions"><button class="btn-preview" data-app="Botão WhatsApp / Grupo" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Barra de Vantagens" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Barra de Vantagens</div></div><div class="servico-actions"><button class="btn-preview" data-app="Barra de Vantagens" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Cupom Copiável" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Cupom Copiável</div></div><div class="servico-actions"><button class="btn-preview" data-app="Cupom Copiável" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Oferta Relâmpago" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Oferta Relâmpago</div></div><div class="servico-actions"><button class="btn-preview" data-app="Oferta Relâmpago" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Brinde Automático" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Brinde Automático</div></div><div class="servico-actions"><button class="btn-preview" data-app="Brinde Automático" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Feedbacks Personalizados" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Feedbacks Personalizados</div></div><div class="servico-actions"><button class="btn-preview" data-app="Avaliações" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Rodapé Informativo" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Rodapé Informativo</div></div><div class="servico-actions"><button class="btn-preview" data-app="Rodapé Informativo" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Links Rápidos" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Links Rápidos</div></div><div class="servico-actions"><button class="btn-preview" data-app="Links Rápidos" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Destaques da Loja" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Destaques da Loja</div></div><div class="servico-actions"><button class="btn-preview" data-app="Vitrine de Destaques" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
+<div class="servico" data-valor="150" data-nome="Promoções" data-tipo="aplicacao"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Promoções</div></div><div class="servico-actions"><button class="btn-preview" data-app="Promoções" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$150</div></div></div>
 </section>
 
 <!-- Aplicações de Compra -->
@@ -322,8 +342,8 @@ img{max-width:100%;height:auto;display:block}
 <div class="categoria-subtitle">R$120 cada</div>
 </div>
 </div>
-<div class="servico" data-valor="120" data-nome="Compre por Tamanho" data-tipo="compra"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Compre por Tamanho</div></div><div class="servico-valor">R$120</div></div>
-<div class="servico" data-valor="120" data-nome="Compre por Marca" data-tipo="compra"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Compre por Marca</div></div><div class="servico-valor">R$120</div></div>
+<div class="servico" data-valor="120" data-nome="Compre por Tamanho" data-tipo="compra"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Compre por Tamanho</div></div><div class="servico-actions"><button class="btn-preview" data-app="Compre por Tamanho" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$120</div></div></div>
+<div class="servico" data-valor="120" data-nome="Compre por Marca" data-tipo="compra"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Compre por Marca</div></div><div class="servico-actions"><button class="btn-preview" data-app="Compre por Marca" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$120</div></div></div>
 </section>
 
 <!-- Carrosseis -->
@@ -335,8 +355,8 @@ img{max-width:100%;height:auto;display:block}
 <div class="categoria-subtitle">R$250 cada</div>
 </div>
 </div>
-<div class="servico" data-valor="250" data-nome="Carrossel Institucional" data-tipo="carrossel"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Carrossel Institucional</div></div><div class="servico-valor">R$250</div></div>
-<div class="servico" data-valor="250" data-nome="Carrossel de Produtos" data-tipo="carrossel"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Carrossel de Produtos</div></div><div class="servico-valor">R$250</div></div>
+<div class="servico" data-valor="250" data-nome="Carrossel Institucional" data-tipo="carrossel"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Carrossel Institucional</div></div><div class="servico-actions"><button class="btn-preview" data-app="Carrossel Institucional" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$250</div></div></div>
+<div class="servico" data-valor="250" data-nome="Carrossel de Produtos" data-tipo="carrossel"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Carrossel de Produtos</div></div><div class="servico-actions"><button class="btn-preview" data-app="Carrossel de Produtos" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$250</div></div></div>
 </section>
 
 <!-- Calculadora -->
@@ -348,7 +368,7 @@ img{max-width:100%;height:auto;display:block}
 <div class="categoria-subtitle">Ferramenta premium</div>
 </div>
 </div>
-<div class="servico" data-valor="550" data-nome="Calculadora Personalizada" data-tipo="avancado"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Calculadora Personalizada</div></div><div class="servico-valor">R$550</div></div>
+<div class="servico" data-valor="550" data-nome="Calculadora Personalizada" data-tipo="avancado"><div class="servico-check"><i class="fas fa-check"></i></div><div class="servico-info"><div class="servico-nome">Calculadora Personalizada</div></div><div class="servico-actions"><button class="btn-preview" data-app="Calculadora Personalizada" onclick="abrirPreview(event, this)" title="Ver preview"><i class="fas fa-eye"></i></button><div class="servico-valor">R$550</div></div></div>
 </section>
 
 <!-- Estrutura / Redesign -->
@@ -380,6 +400,24 @@ img{max-width:100%;height:auto;display:block}
 <span id="totalItens">0 itens</span>
 </div>
 <button class="carrinho-btn" onclick="abrirModal()"><i class="fas fa-file-invoice"></i> Ver Proposta</button>
+</div>
+</div>
+
+<!-- Modal Preview -->
+<div class="preview-overlay" id="previewOverlay" onclick="fecharPreview(event)">
+<div class="preview-modal" onclick="event.stopPropagation()">
+<div class="preview-header">
+<h3 class="preview-title"><i class="fas fa-eye"></i> <span id="previewTituloApp">Preview</span></h3>
+<button class="preview-close" onclick="fecharPreview()"><i class="fas fa-times"></i></button>
+</div>
+<div class="preview-toolbar">
+<button class="preview-size active" data-size="desktop" onclick="setPreviewSize('desktop')"><i class="fas fa-desktop"></i> Desktop</button>
+<button class="preview-size" data-size="tablet" onclick="setPreviewSize('tablet')"><i class="fas fa-tablet-alt"></i> Tablet</button>
+<button class="preview-size" data-size="mobile" onclick="setPreviewSize('mobile')"><i class="fas fa-mobile-alt"></i> Mobile</button>
+</div>
+<div class="preview-container">
+<iframe id="previewIframe"></iframe>
+</div>
 </div>
 </div>
 
@@ -424,7 +462,102 @@ img{max-width:100%;height:auto;display:block}
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// Supabase Config
+const SUPABASE_URL = 'https://kvpetrexgrpizwfomjjt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cGV0cmV4Z3JwaXp3Zm9tamp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MzkzNjUsImV4cCI6MjA4NDQxNTM2NX0.kP9TQqYIiPchtd7Y89oQdg78nZw4GBiTvLhxhz1vWs8';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Previews
+let previews = [];
+
+async function carregarPreviews() {
+    // Carregar do localStorage primeiro
+    previews = JSON.parse(localStorage.getItem('vizzu_previews') || '[]');
+    
+    // Tentar carregar do Supabase
+    try {
+        const { data: previewsDB, error } = await db
+            .from('previews')
+            .select('*');
+        
+        if (!error && previewsDB) {
+            previews = previewsDB;
+            localStorage.setItem('vizzu_previews', JSON.stringify(previews));
+            console.log('Previews carregados:', previews.length);
+        }
+    } catch(e) {
+        console.error('Erro ao carregar previews:', e);
+    }
+    
+    // Atualizar botões de preview disponíveis
+    atualizarBotoesPreview();
+}
+
+function atualizarBotoesPreview() {
+    document.querySelectorAll('.btn-preview').forEach(btn => {
+        const app = btn.dataset.app;
+        const temPreview = previews.some(p => p.nome === app || normalizar(p.nome) === normalizar(app));
+        if (temPreview) {
+            btn.classList.add('disponivel');
+        } else {
+            btn.classList.remove('disponivel');
+        }
+    });
+}
+
+function normalizar(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+}
+
+function abrirPreview(event, btn) {
+    event.stopPropagation();
+    const app = btn.dataset.app;
+    const preview = previews.find(p => p.nome === app || normalizar(p.nome) === normalizar(app));
+    
+    if (!preview || !preview.codigo) {
+        alert('Preview ainda nao cadastrado para esta aplicacao!');
+        return;
+    }
+    
+    document.getElementById('previewTituloApp').textContent = preview.nome;
+    document.getElementById('previewIframe').srcdoc = preview.codigo;
+    setPreviewSize('desktop');
+    document.getElementById('previewOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    trackEvent('preview', 'View', app);
+}
+
+function fecharPreview(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('previewOverlay').classList.remove('active');
+    document.getElementById('previewIframe').srcdoc = '';
+    document.body.style.overflow = '';
+}
+
+function setPreviewSize(size) {
+    const iframe = document.getElementById('previewIframe');
+    const container = document.querySelector('.preview-container');
+    
+    document.querySelectorAll('.preview-size').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.preview-size[data-size="' + size + '"]').classList.add('active');
+    
+    if (size === 'mobile') {
+        iframe.style.width = '375px';
+        iframe.style.height = '667px';
+    } else if (size === 'tablet') {
+        iframe.style.width = '768px';
+        iframe.style.height = '100%';
+    } else {
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+    }
+}
+
+// Carregar previews ao iniciar
+carregarPreviews();
+
 // Reveal
 const reveals = document.querySelectorAll('.reveal');
 const obs = new IntersectionObserver(entries => {

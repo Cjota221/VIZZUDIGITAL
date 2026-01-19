@@ -46,15 +46,26 @@ CREATE TABLE IF NOT EXISTS leads (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Tabela de Previews das Aplicações
+CREATE TABLE IF NOT EXISTS previews (
+    id SERIAL PRIMARY KEY,
+    nome TEXT UNIQUE NOT NULL,
+    codigo TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Habilitar RLS (Row Level Security) - Opcional para seguranca
 ALTER TABLE propostas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cupons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE previews ENABLE ROW LEVEL SECURITY;
 
 -- Politicas para permitir acesso anonimo (necessario para funcionar sem login)
 CREATE POLICY "Permitir tudo propostas" ON propostas FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Permitir tudo cupons" ON cupons FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Permitir tudo leads" ON leads FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir tudo previews" ON previews FOR ALL USING (true) WITH CHECK (true);
 
 -- Inserir cupom VIZZU10 padrao
 INSERT INTO cupons (codigo, desconto, indicador) 
