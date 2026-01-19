@@ -674,11 +674,21 @@
             const p = propostas.find(prop => prop.id === id);
             if (!p) return;
             
-            let msg = '*PROPOSTA VIZZU DIGITAL*\n\n';
-            msg += '*Loja:* ' + (p.loja || 'Não informado') + '\n';
-            msg += '*Cliente:* ' + (p.cliente || 'Cliente') + '\n';
-            if (p.telefone) msg += '*WhatsApp:* ' + p.telefone + '\n';
-            msg += '\n*ITENS:*\n';
+            // Pegar telefone do cliente (limpar caracteres)
+            let telCliente = (p.telefone || '').replace(/\D/g, '');
+            if (!telCliente) {
+                alert('Telefone do cliente nao informado!');
+                return;
+            }
+            // Adicionar 55 se nao tiver
+            if (telCliente.length <= 11) {
+                telCliente = '55' + telCliente;
+            }
+            
+            let msg = 'Ola ' + (p.cliente || '') + '!\n\n';
+            msg += 'Aqui e a *VIZZU DIGITAL*. Montamos uma proposta baseada nas informacoes que tivemos sobre o seu site:\n\n';
+            msg += '*Loja:* ' + (p.loja || 'Nao informado') + '\n\n';
+            msg += '*ITENS DA PROPOSTA:*\n';
             
             if (p.itens) {
                 p.itens.forEach(function(item) {
@@ -689,10 +699,15 @@
                 msg += '• ' + p.banners + ' Banner(s) - R$' + (precoBanner[p.banners] || 0).toLocaleString('pt-BR') + '\n';
             }
             
-            msg += '\n*TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
-            msg += '\n*Prazo:* ' + (p.prazo || 7) + ' dias uteis';
+            msg += '\n*VALOR TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
+            msg += '\n*Prazo de entrega:* ' + (p.prazo || 7) + ' dias uteis';
             
-            window.open('https://wa.me/5562982237075?text=' + encodeURIComponent(msg), '_blank');
+            msg += '\n\n---\n\n';
+            msg += 'Voce tambem pode *personalizar sua proposta*! Monte seu proprio combo escolhendo exatamente o que precisa:\n\n';
+            msg += 'https://vizzudigital.netlify.app/orcamento\n\n';
+            msg += 'Qualquer duvida, estamos a disposicao!';
+            
+            window.open('https://wa.me/' + telCliente + '?text=' + encodeURIComponent(msg), '_blank');
         };
         
         // ===== MODAL NOVA =====
