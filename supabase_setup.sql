@@ -61,6 +61,12 @@ ALTER TABLE cupons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE previews ENABLE ROW LEVEL SECURITY;
 
+-- Remover politicas antigas (caso existam)
+DROP POLICY IF EXISTS "Permitir tudo propostas" ON propostas;
+DROP POLICY IF EXISTS "Permitir tudo cupons" ON cupons;
+DROP POLICY IF EXISTS "Permitir tudo leads" ON leads;
+DROP POLICY IF EXISTS "Permitir tudo previews" ON previews;
+
 -- Politicas para permitir acesso anonimo (necessario para funcionar sem login)
 CREATE POLICY "Permitir tudo propostas" ON propostas FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Permitir tudo cupons" ON cupons FOR ALL USING (true) WITH CHECK (true);

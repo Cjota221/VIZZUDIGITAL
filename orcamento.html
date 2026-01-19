@@ -108,9 +108,9 @@ img{max-width:100%;height:auto;display:block}
 .servico-nome{font-weight:600;font-size:.9rem}
 .servico-valor{font-weight:700;font-size:.95rem;color:var(--lime);white-space:nowrap}
 .servico-actions{display:flex;align-items:center;gap:8px}
-.btn-preview{width:32px;height:32px;border-radius:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:var(--primary);font-size:.75rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.btn-preview.disponivel{display:flex}
-.btn-preview:hover{background:var(--primary);color:var(--white);transform:scale(1.05)}
+.btn-preview{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--gray);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;opacity:.5}
+.btn-preview.disponivel{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.4);color:var(--primary);opacity:1}
+.btn-preview.disponivel:hover{background:var(--primary);color:var(--white);transform:scale(1.05)}
 
 /* MODAL PREVIEW */
 .preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;padding:10px}
@@ -496,9 +496,11 @@ async function carregarPreviews() {
 }
 
 function atualizarBotoesPreview() {
+    console.log('Atualizando botoes. Previews disponiveis:', previews.map(p => p.nome));
     document.querySelectorAll('.btn-preview').forEach(btn => {
         const app = btn.dataset.app;
         const temPreview = previews.some(p => p.nome === app || normalizar(p.nome) === normalizar(app));
+        console.log('App:', app, '| Tem preview:', temPreview);
         if (temPreview) {
             btn.classList.add('disponivel');
         } else {
@@ -517,7 +519,44 @@ function abrirPreview(event, btn) {
     const preview = previews.find(p => p.nome === app || normalizar(p.nome) === normalizar(app));
     
     if (!preview || !preview.codigo) {
-        alert('Preview ainda nao cadastrado para esta aplicacao!');
+        // Mostrar preview "em breve" em vez de alert
+        document.getElementById('previewTituloApp').textContent = app;
+        document.getElementById('previewIframe').srcdoc = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+                <style>
+                    body { 
+                        margin:0; 
+                        min-height:100vh; 
+                        display:flex; 
+                        align-items:center; 
+                        justify-content:center; 
+                        background:linear-gradient(135deg,#0a0a0f,#1a1a24); 
+                        font-family:Poppins,sans-serif; 
+                        color:#fff;
+                        text-align:center;
+                        padding:40px;
+                    }
+                    .box { max-width:400px; }
+                    .icon { font-size:4rem; margin-bottom:20px; opacity:.5; }
+                    h2 { font-size:1.5rem; margin-bottom:10px; color:#ccff00; }
+                    p { font-size:.95rem; color:#999; line-height:1.6; }
+                </style>
+            </head>
+            <body>
+                <div class="box">
+                    <div class="icon">🚧</div>
+                    <h2>Preview em breve!</h2>
+                    <p>Estamos preparando a demonstracao de <strong style="color:#7c3aed">${app}</strong>. Em breve voce podera ver exatamente como fica na sua loja!</p>
+                </div>
+            </body>
+            </html>
+        `;
+        setPreviewSize('desktop');
+        document.getElementById('previewOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
         return;
     }
     
