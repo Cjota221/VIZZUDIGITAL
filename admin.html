@@ -479,21 +479,19 @@
                 <div class="banner-opt" data-qtd="5">5 - R$450</div>
             </div>
             
-            <div class="section-title"><i class="fas fa-bolt"></i> Aplica��es Simples (R$150)</div>
+            <div class="section-title"><i class="fas fa-bolt"></i> Aplicacoes Simples (R$150)</div>
             <div class="options-grid" id="appSimples">
-                <div class="option-item" data-valor="150" data-nome="Bot�o WhatsApp"><div class="check"><i class="fas fa-check"></i></div>Bot�o WhatsApp</div>
+                <div class="option-item" data-valor="150" data-nome="Links Rapidos"><div class="check"><i class="fas fa-check"></i></div>Links Rapidos / WhatsApp</div>
                 <div class="option-item" data-valor="150" data-nome="Barra de Vantagens"><div class="check"><i class="fas fa-check"></i></div>Barra de Vantagens</div>
-                <div class="option-item" data-valor="150" data-nome="Cupom Copi�vel"><div class="check"><i class="fas fa-check"></i></div>Cupom Copi�vel</div>
-                <div class="option-item" data-valor="150" data-nome="Oferta Rel�mpago"><div class="check"><i class="fas fa-check"></i></div>Oferta Rel�mpago</div>
-                <div class="option-item" data-valor="150" data-nome="Brinde Autom�tico"><div class="check"><i class="fas fa-check"></i></div>Brinde Autom�tico</div>
-                <div class="option-item" data-valor="150" data-nome="Feedbacks"><div class="check"><i class="fas fa-check"></i></div>Feedbacks</div>
-                <div class="option-item" data-valor="150" data-nome="Rodap� Informativo"><div class="check"><i class="fas fa-check"></i></div>Rodap� Informativo</div>
-                <div class="option-item" data-valor="150" data-nome="Links R�pidos"><div class="check"><i class="fas fa-check"></i></div>Links R�pidos</div>
-                <div class="option-item" data-valor="150" data-nome="Destaques"><div class="check"><i class="fas fa-check"></i></div>Destaques</div>
-                <div class="option-item" data-valor="150" data-nome="Promo��es"><div class="check"><i class="fas fa-check"></i></div>Promo��es</div>
+                <div class="option-item" data-valor="150" data-nome="Cupom Copiavel"><div class="check"><i class="fas fa-check"></i></div>Cupom Copiavel</div>
+                <div class="option-item" data-valor="150" data-nome="Promocoes"><div class="check"><i class="fas fa-check"></i></div>Promocoes / Oferta</div>
+                <div class="option-item" data-valor="150" data-nome="Brinde Automatico"><div class="check"><i class="fas fa-check"></i></div>Brinde Automatico</div>
+                <div class="option-item" data-valor="150" data-nome="Feedbacks"><div class="check"><i class="fas fa-check"></i></div>Feedbacks / Avaliacoes</div>
+                <div class="option-item" data-valor="150" data-nome="Rodape Informativo"><div class="check"><i class="fas fa-check"></i></div>Rodape Informativo</div>
+                <div class="option-item" data-valor="150" data-nome="Destaques"><div class="check"><i class="fas fa-check"></i></div>Destaques da Loja</div>
             </div>
             
-            <div class="section-title"><i class="fas fa-shopping-bag"></i> Aplica��es Compra (R$120)</div>
+            <div class="section-title"><i class="fas fa-shopping-bag"></i> Aplicacoes Compra (R$120)</div>
             <div class="options-grid" id="appCompra">
                 <div class="option-item" data-valor="120" data-nome="Compre por Tamanho"><div class="check"><i class="fas fa-check"></i></div>Compre por Tamanho</div>
                 <div class="option-item" data-valor="120" data-nome="Compre por Marca"><div class="check"><i class="fas fa-check"></i></div>Compre por Marca</div>
@@ -505,7 +503,7 @@
                 <div class="option-item" data-valor="250" data-nome="Carrossel de Produtos"><div class="check"><i class="fas fa-check"></i></div>Carrossel de Produtos</div>
             </div>
             
-            <div class="section-title"><i class="fas fa-calculator"></i> Avan�ado</div>
+            <div class="section-title"><i class="fas fa-calculator"></i> Avancado</div>
             <div class="options-grid">
                 <div class="option-item" data-valor="550" data-nome="Calculadora Personalizada"><div class="check"><i class="fas fa-check"></i></div>Calculadora - R$550</div>
             </div>
@@ -795,7 +793,7 @@
         const precoBanner = { 0: 0, 1: 120, 3: 300, 5: 450 };
         let dbOnline = false;
         
-        // ===== INICIALIZA��O =====
+        // ===== INICIALIZACAO =====
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin carregado!');
             carregarDados();
@@ -916,7 +914,7 @@
         
         // ===== EVENTOS =====
         function setupEventos() {
-            // Bot�o Nova Proposta
+            // Botao Nova Proposta
             document.getElementById('btnNovaProposta').addEventListener('click', function() {
                 console.log('Abrindo modal nova proposta');
                 abrirModalNova();
@@ -1472,11 +1470,11 @@
                 return;
             }
             
-            let html = '<table><thead><tr><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th><th>A��es</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th><th>Acoes</th></tr></thead><tbody>';
             
             lista.forEach(function(p) {
                 html += '<tr>';
-                html += '<td><div class="cliente-nome">' + (p.loja || 'Sem nome') + '</div><div class="cliente-tel">' + (p.cliente || '') + ' ' + (p.telefone ? '� ' + p.telefone : '') + '</div></td>';
+                html += '<td><div class="cliente-nome">' + (p.loja || 'Sem nome') + '</div><div class="cliente-tel">' + (p.cliente || '') + ' ' + (p.telefone ? '- ' + p.telefone : '') + '</div></td>';
                 html += '<td>' + (p.data || '-') + '</td>';
                 html += '<td><div class="valor">R$' + (p.total || 0).toLocaleString('pt-BR') + '</div></td>';
                 html += '<td><select class="status-select" onchange="mudarStatus(' + p.id + ', this.value)">';
@@ -1498,7 +1496,7 @@
             container.innerHTML = html;
         }
         
-        // ===== FUN��ES GLOBAIS =====
+        // ===== FUNCOES GLOBAIS =====
         window.mudarStatus = function(id, status) {
             const idx = propostas.findIndex(p => p.id === id);
             if (idx !== -1) {

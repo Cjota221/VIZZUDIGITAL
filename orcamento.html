@@ -608,6 +608,9 @@ let bannerQtd = 0;
 let pixAtivo = false;
 let cupomAtivo = null;
 
+// Minimo de customizacoes
+const MINIMO_ITENS = 4;
+
 // Cupons do localStorage
 let cupons = [];
 try { cupons = JSON.parse(localStorage.getItem('vizzu_cupons') || '[]'); } catch(e) { cupons = []; }
@@ -749,19 +752,40 @@ function calcularParcelas(valor) {
 function atualizarCarrinho() {
     const total = calcularTotal();
     const qtd = selecionados.length + (bannerQtd > 0 ? 1 : 0);
+    const faltam = MINIMO_ITENS - selecionados.length;
     
     document.getElementById('totalValor').textContent = total.toLocaleString('pt-BR');
-    document.getElementById('totalItens').textContent = `${qtd} ${qtd === 1 ? 'item' : 'itens'}`;
+    
+    if (selecionados.length < MINIMO_ITENS) {
+        document.getElementById('totalItens').innerHTML = `<span style="color:#f59e0b">${selecionados.length}/${MINIMO_ITENS} itens (min. ${MINIMO_ITENS})</span>`;
+    } else {
+        document.getElementById('totalItens').textContent = `${qtd} ${qtd === 1 ? 'item' : 'itens'}`;
+    }
     
     const carrinho = document.getElementById('carrinhoFloat');
+    const btnCarrinho = carrinho.querySelector('.carrinho-btn');
+    
     if (qtd > 0) {
         carrinho.classList.add('ativo');
+        if (selecionados.length < MINIMO_ITENS) {
+            btnCarrinho.innerHTML = `<i class="fas fa-plus"></i> Faltam ${faltam}`;
+            btnCarrinho.style.background = '#f59e0b';
+        } else {
+            btnCarrinho.innerHTML = `<i class="fas fa-file-invoice"></i> Ver Proposta`;
+            btnCarrinho.style.background = 'var(--lime)';
+        }
     } else {
         carrinho.classList.remove('ativo');
     }
 }
 
 function abrirModal() {
+    // Verificar minimo de itens
+    if (selecionados.length < MINIMO_ITENS) {
+        alert('Pedido minimo de ' + MINIMO_ITENS + ' customizacoes!\n\nVoce selecionou apenas ' + selecionados.length + '. Selecione mais ' + (MINIMO_ITENS - selecionados.length) + ' para continuar.');
+        return;
+    }
+    
     const total = calcularTotal();
     const bonus = calcularBonus();
     const parcelas = calcularParcelas(total);
