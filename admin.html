@@ -1090,17 +1090,17 @@
             }
             
             // Se tem cupom aplicado, mostrar desconto
-            if (p.cupom && p.desconto > 0) {
+            if (p.cupom && p.descontoCupom > 0) {
+                // Calcular a porcentagem do cupom
+                const porcentagemCupom = Math.round((p.descontoCupom / subtotal) * 100);
                 msg += '\n*Subtotal:* R$' + subtotal.toLocaleString('pt-BR');
-                msg += '\n*Cupom aplicado:* ' + p.cupom + ' (-' + p.desconto + '%)';
-                msg += '\n*Desconto:* -R$' + Math.round(subtotal * p.desconto / 100).toLocaleString('pt-BR');
+                msg += '\n*Cupom aplicado:* ' + p.cupom + ' (-' + porcentagemCupom + '%)';
+                msg += '\n*Desconto:* -R$' + p.descontoCupom.toLocaleString('pt-BR');
             }
             
             // Se pagamento e PIX, mostrar desconto adicional
-            if (p.pagamento === 'pix') {
-                const valorAntesDescPix = p.cupom ? subtotal - Math.round(subtotal * p.desconto / 100) : subtotal;
-                const descontoPix = Math.round(valorAntesDescPix * 0.05);
-                msg += '\n*Pagamento via PIX:* -5% (-R$' + descontoPix.toLocaleString('pt-BR') + ')';
+            if (p.pix && p.descontoPix > 0) {
+                msg += '\n*Pagamento via PIX:* -5% (-R$' + p.descontoPix.toLocaleString('pt-BR') + ')';
             }
             
             msg += '\n\n*VALOR TOTAL: R$' + (p.total || 0).toLocaleString('pt-BR') + '*';
